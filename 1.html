@@ -492,23 +492,6 @@ input[type=range]::-webkit-slider-thumb{
       Chọn file / kéo thả audio vào đây
     </div>
     <input type="file" id="fileInput" accept="audio/*" multiple style="display:none" onchange="loadFiles(this.files)">
-
-    <!-- Folder Auto-load -->
-    <div class="url-area" style="margin-top:9px;margin-bottom:0">
-      <div class="area-label"><i class="fas fa-folder-tree"></i>Thư mục tự động</div>
-      <div id="folderStatus" style="font-size:12px;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono)">Chưa chọn thư mục</div>
-      <div style="display:flex;gap:7px">
-        <button class="btn btn-card btn-sm" style="flex:1" onclick="pickAudioFolder()">
-          <i class="fas fa-folder-plus"></i> Chọn thư mục
-        </button>
-        <button class="btn btn-icon" id="folderRescanBtn" onclick="rescanFolder()" title="Quét lại thư mục" style="display:none">
-          <i class="fas fa-rotate"></i>
-        </button>
-      </div>
-      <div id="folderBrowserNote" style="font-size:11px;color:var(--text-muted);margin-top:6px;display:none">
-        <i class="fas fa-circle-info" style="color:var(--accent2)"></i> Chỉ hỗ trợ Chrome / Edge
-      </div>
-    </div>
   </div>
 
   <!-- Playlist -->
@@ -1270,140 +1253,9 @@ function clearStorage() {
 }
 
 // ══════════════════════════════════════════════════════
-// FILE SYSTEM ACCESS API – THƯ MỤC TỰ ĐỘNG
-// ══════════════════════════════════════════════════════
-const FS_DB_NAME = 'langaudio_fs_v1';
-const FS_STORE   = 'handles';
-let _fsDb      = null;
-let _dirHandle = null;
-
-async function getFsDb() {
-  if (_fsDb) return _fsDb;
-  return new Promise((res, rej) => {
-    const req = indexedDB.open(FS_DB_NAME, 1);
-    req.onupgradeneeded = e => e.target.result.createObjectStore(FS_STORE);
-    req.onsuccess = e => { _fsDb = e.target.result; res(_fsDb); };
-    req.onerror   = e => rej(e);
-  });
-}
-
-async function saveDirHandle(handle) {
-  const db = await getFsDb();
-  return new Promise((res, rej) => {
-    const tx = db.transaction(FS_STORE, 'readwrite');
-    tx.objectStore(FS_STORE).put(handle, 'audioDir');
-    tx.oncomplete = res; tx.onerror = rej;
-  });
-}
-
-async function loadDirHandleFromDB() {
-  try {
-    const db = await getFsDb();
-    return new Promise((res, rej) => {
-      const tx  = db.transaction(FS_STORE, 'readonly');
-      const req = tx.objectStore(FS_STORE).get('audioDir');
-      req.onsuccess = e => res(e.target.result || null);
-      req.onerror   = () => res(null);
-    });
-  } catch { return null; }
-}
-
-function setFolderStatus(label, showRescan) {
-  const el  = document.getElementById('folderStatus');
-  const btn = document.getElementById('folderRescanBtn');
-  el.innerHTML = label;
-  btn.style.display = showRescan ? 'flex' : 'none';
-}
-
-async function scanAndLoad(handle, silent = false) {
-  const audioExts = /\.(mp3|wav|ogg|m4a|flac|aac|opus|webm|wma)$/i;
-  const newFiles  = [];
-  try {
-    for await (const entry of handle.values()) {
-      if (entry.kind === 'file' && audioExts.test(entry.name)) {
-        const file = await entry.getFile();
-        const name = file.name.replace(/\.[^.]+$/, '');
-        const exists = S.tracks.some(t => t.type === 'file' && t.name === name);
-        if (!exists) newFiles.push(file);
-      }
-    }
-  } catch (e) {
-    toast('Không thể đọc thư mục: ' + e.message, 'err'); return;
-  }
-  if (newFiles.length > 0) {
-    loadFiles(newFiles);
-  } else if (!silent) {
-    toast('Không có file audio mới trong thư mục', 'info');
-  }
-}
-
-async function pickAudioFolder() {
-  if (!('showDirectoryPicker' in window)) {
-    document.getElementById('folderBrowserNote').style.display = 'block';
-    toast('Trình duyệt chưa hỗ trợ — dùng Chrome hoặc Edge', 'err');
-    return;
-  }
-  try {
-    const handle = await window.showDirectoryPicker({ mode: 'read' });
-    _dirHandle = handle;
-    await saveDirHandle(handle);
-    setFolderStatus(
-      `<i class="fas fa-folder" style="color:var(--accent)"></i> <span style="color:var(--text-dim)">${handle.name}</span>`,
-      true
-    );
-    await scanAndLoad(handle);
-  } catch (e) {
-    if (e.name !== 'AbortError') toast('Không thể mở thư mục', 'err');
-  }
-}
-
-async function rescanFolder() {
-  if (!_dirHandle) { toast('Chưa chọn thư mục', 'err'); return; }
-  try {
-    let perm = await _dirHandle.queryPermission({ mode: 'read' });
-    if (perm !== 'granted') {
-      perm = await _dirHandle.requestPermission({ mode: 'read' });
-    }
-    if (perm === 'granted') {
-      await scanAndLoad(_dirHandle);
-    } else {
-      toast('Cần cấp quyền truy cập thư mục', 'err');
-    }
-  } catch (e) {
-    toast('Lỗi quét thư mục', 'err');
-  }
-}
-
-async function restoreFolder() {
-  if (!('showDirectoryPicker' in window)) {
-    document.getElementById('folderBrowserNote').style.display = 'block';
-    return;
-  }
-  const handle = await loadDirHandleFromDB();
-  if (!handle) return;
-  _dirHandle = handle;
-  try {
-    const perm = await handle.queryPermission({ mode: 'read' });
-    if (perm === 'granted') {
-      setFolderStatus(
-        `<i class="fas fa-folder" style="color:var(--accent)"></i> <span style="color:var(--text-dim)">${handle.name}</span>`,
-        true
-      );
-      await scanAndLoad(handle, true); // silent: không toast nếu không có file mới
-    } else {
-      // Hết phiên: vẫn hiện tên thư mục, yêu cầu nhấn Quét lại để cấp quyền lại
-      setFolderStatus(
-        `<i class="fas fa-folder-closed" style="color:var(--text-muted)"></i> <span style="color:var(--text-muted)">${handle.name}</span> <span style="color:var(--danger);font-size:11px">— nhấn 🔄 để kết nối lại</span>`,
-        true
-      );
-    }
-  } catch { /* ignore */ }
-}
-
-// ══════════════════════════════════════════════════════
 // INIT
 // ══════════════════════════════════════════════════════
-async function init() {
+function init() {
   load();
   renderPl();
 
@@ -1433,9 +1285,6 @@ async function init() {
       renderSegs(); updateMarkers();
     }
   }
-
-  // Restore thư mục tự động (File System Access API)
-  await restoreFolder();
 }
 
 init();
