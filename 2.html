@@ -493,34 +493,20 @@ input[type=range]::-webkit-slider-thumb{
     </div>
     <input type="file" id="fileInput" accept="audio/*" multiple style="display:none" onchange="loadFiles(this.files)">
 
-    <!-- Auto-load: GitHub Pages hoặc File System -->
+    <!-- Folder Auto-load -->
     <div class="url-area" style="margin-top:9px;margin-bottom:0">
-      <div class="area-label"><i class="fas fa-rotate"></i>Tự động nạp audio</div>
-
-      <!-- GitHub Pages mode (auto-hiện nếu detect được) -->
-      <div id="ghSection" style="display:none">
-        <div id="ghStatus" style="font-size:12px;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono);line-height:1.5">
-          <i class="fas fa-circle-notch fa-spin"></i> Đang kiểm tra...
-        </div>
-        <button class="btn btn-card btn-sm" style="width:100%" onclick="autoLoadFromGitHub(true)">
-          <i class="fas fa-rotate"></i> Quét lại thư mục audio/
+      <div class="area-label"><i class="fas fa-folder-tree"></i>Thư mục tự động</div>
+      <div id="folderStatus" style="font-size:12px;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono)">Chưa chọn thư mục</div>
+      <div style="display:flex;gap:7px">
+        <button class="btn btn-card btn-sm" style="flex:1" onclick="pickAudioFolder()">
+          <i class="fas fa-folder-plus"></i> Chọn thư mục
+        </button>
+        <button class="btn btn-icon" id="folderRescanBtn" onclick="rescanFolder()" title="Quét lại thư mục" style="display:none">
+          <i class="fas fa-rotate"></i>
         </button>
       </div>
-
-      <!-- File System Access API mode (local / browser) -->
-      <div id="fsSection">
-        <div id="folderStatus" style="font-size:12px;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono)">Chưa chọn thư mục</div>
-        <div style="display:flex;gap:7px">
-          <button class="btn btn-card btn-sm" style="flex:1" onclick="pickAudioFolder()">
-            <i class="fas fa-folder-plus"></i> Chọn thư mục
-          </button>
-          <button class="btn btn-icon" id="folderRescanBtn" onclick="rescanFolder()" title="Quét lại thư mục" style="display:none">
-            <i class="fas fa-rotate"></i>
-          </button>
-        </div>
-        <div id="folderBrowserNote" style="font-size:11px;color:var(--text-muted);margin-top:6px;display:none">
-          <i class="fas fa-circle-info" style="color:var(--accent2)"></i> Chỉ hỗ trợ Chrome / Edge
-        </div>
+      <div id="folderBrowserNote" style="font-size:11px;color:var(--text-muted);margin-top:6px;display:none">
+        <i class="fas fa-circle-info" style="color:var(--accent2)"></i> Chỉ hỗ trợ Chrome / Edge
       </div>
     </div>
   </div>
@@ -1284,98 +1270,8 @@ function clearStorage() {
 }
 
 // ══════════════════════════════════════════════════════
-// AUTO-LOAD: GITHUB PAGES + FILE SYSTEM ACCESS API
+// FILE SYSTEM ACCESS API – THƯ MỤC TỰ ĐỘNG
 // ══════════════════════════════════════════════════════
-
-/* ── GitHub Pages detection ── */
-function detectGitHub() {
-  const host = window.location.hostname;
-  const path = window.location.pathname;
-  if (!host.endsWith('.github.io')) return null;
-  const owner = host.replace('.github.io', '');
-  // Project page: username.github.io/repo-name/
-  // User page:    username.github.io/
-  const parts = path.split('/').filter(Boolean);
-  const repo  = parts.length ? parts[0] : owner + '.github.io';
-  return { owner, repo };
-}
-
-function setGhStatus(html) {
-  const el = document.getElementById('ghStatus');
-  if (el) el.innerHTML = html;
-}
-
-async function autoLoadFromGitHub(manual = false) {
-  const gh = detectGitHub();
-  if (!gh) return false;
-
-  const { owner, repo } = gh;
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/audio`;
-
-  setGhStatus('<i class="fas fa-circle-notch fa-spin"></i> Đang quét thư mục audio/…');
-
-  try {
-    const res = await fetch(apiUrl, {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
-
-    if (res.status === 404) {
-      setGhStatus('<i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i> Không tìm thấy thư mục <b>audio/</b>');
-      return false;
-    }
-    if (res.status === 403) {
-      setGhStatus('<i class="fas fa-lock" style="color:var(--danger)"></i> GitHub API rate limit — thử lại sau');
-      return false;
-    }
-    if (!res.ok) {
-      setGhStatus(`<i class="fas fa-circle-xmark" style="color:var(--danger)"></i> Lỗi ${res.status}`);
-      return false;
-    }
-
-    const items    = await res.json();
-    const audioRx  = /\.(mp3|wav|ogg|m4a|flac|aac|opus|webm|wma)$/i;
-    const audItems = items.filter(f => f.type === 'file' && audioRx.test(f.name));
-
-    if (!audItems.length) {
-      setGhStatus('<i class="fas fa-folder-open" style="color:var(--text-muted)"></i> Thư mục <b>audio/</b> chưa có file');
-      return false;
-    }
-
-    let added = 0;
-    audItems.forEach(f => {
-      const name   = f.name.replace(/\.[^.]+$/, '');
-      const exists = S.tracks.some(t => t.name === name);
-      if (!exists) {
-        S.tracks.push({ id: uid(), name, src: f.download_url, type: 'url', segments: [] });
-        added++;
-      }
-    });
-
-    const total   = audItems.length;
-    const skipped = total - added;
-    const stamp   = new Date().toLocaleTimeString('vi-VN', { hour: '2-digit', minute: '2-digit' });
-
-    if (added > 0) {
-      save(); renderPl();
-      if (!S.activeId) selectTrack(S.tracks[S.tracks.length - added].id);
-    }
-
-    setGhStatus(
-      `<i class="fas fa-circle-check" style="color:var(--success)"></i> ` +
-      `${total} bài · <span style="color:var(--success)">${added} mới</span>` +
-      (skipped ? ` · ${skipped} đã có` : '') +
-      ` <span style="opacity:.5">· ${stamp}</span>`
-    );
-    if (manual && added === 0) toast('Không có file mới trong audio/', 'info');
-    return true;
-
-  } catch (e) {
-    setGhStatus('<i class="fas fa-circle-xmark" style="color:var(--danger)"></i> Không kết nối được GitHub API');
-    return false;
-  }
-}
-
-/* ── File System Access API (local / non-GitHub) ── */
 const FS_DB_NAME = 'langaudio_fs_v1';
 const FS_STORE   = 'handles';
 let _fsDb      = null;
@@ -1403,7 +1299,7 @@ async function saveDirHandle(handle) {
 async function loadDirHandleFromDB() {
   try {
     const db = await getFsDb();
-    return new Promise((res) => {
+    return new Promise((res, rej) => {
       const tx  = db.transaction(FS_STORE, 'readonly');
       const req = tx.objectStore(FS_STORE).get('audioDir');
       req.onsuccess = e => res(e.target.result || null);
@@ -1415,8 +1311,8 @@ async function loadDirHandleFromDB() {
 function setFolderStatus(label, showRescan) {
   const el  = document.getElementById('folderStatus');
   const btn = document.getElementById('folderRescanBtn');
-  if (el)  el.innerHTML = label;
-  if (btn) btn.style.display = showRescan ? 'flex' : 'none';
+  el.innerHTML = label;
+  btn.style.display = showRescan ? 'flex' : 'none';
 }
 
 async function scanAndLoad(handle, silent = false) {
@@ -1431,9 +1327,14 @@ async function scanAndLoad(handle, silent = false) {
         if (!exists) newFiles.push(file);
       }
     }
-  } catch (e) { toast('Không thể đọc thư mục: ' + e.message, 'err'); return; }
-  if (newFiles.length > 0) { loadFiles(newFiles); }
-  else if (!silent) { toast('Không có file audio mới', 'info'); }
+  } catch (e) {
+    toast('Không thể đọc thư mục: ' + e.message, 'err'); return;
+  }
+  if (newFiles.length > 0) {
+    loadFiles(newFiles);
+  } else if (!silent) {
+    toast('Không có file audio mới trong thư mục', 'info');
+  }
 }
 
 async function pickAudioFolder() {
@@ -1460,23 +1361,20 @@ async function rescanFolder() {
   if (!_dirHandle) { toast('Chưa chọn thư mục', 'err'); return; }
   try {
     let perm = await _dirHandle.queryPermission({ mode: 'read' });
-    if (perm !== 'granted') perm = await _dirHandle.requestPermission({ mode: 'read' });
-    if (perm === 'granted') { await scanAndLoad(_dirHandle); }
-    else { toast('Cần cấp quyền truy cập thư mục', 'err'); }
-  } catch { toast('Lỗi quét thư mục', 'err'); }
+    if (perm !== 'granted') {
+      perm = await _dirHandle.requestPermission({ mode: 'read' });
+    }
+    if (perm === 'granted') {
+      await scanAndLoad(_dirHandle);
+    } else {
+      toast('Cần cấp quyền truy cập thư mục', 'err');
+    }
+  } catch (e) {
+    toast('Lỗi quét thư mục', 'err');
+  }
 }
 
-async function initAutoLoad() {
-  // Ưu tiên GitHub Pages (server-side, không cần tương tác)
-  const gh = detectGitHub();
-  if (gh) {
-    document.getElementById('ghSection').style.display = 'block';
-    document.getElementById('fsSection').style.display = 'none';
-    await autoLoadFromGitHub(false);
-    return;
-  }
-
-  // Fallback: File System Access API (local)
+async function restoreFolder() {
   if (!('showDirectoryPicker' in window)) {
     document.getElementById('folderBrowserNote').style.display = 'block';
     return;
@@ -1491,10 +1389,11 @@ async function initAutoLoad() {
         `<i class="fas fa-folder" style="color:var(--accent)"></i> <span style="color:var(--text-dim)">${handle.name}</span>`,
         true
       );
-      await scanAndLoad(handle, true);
+      await scanAndLoad(handle, true); // silent: không toast nếu không có file mới
     } else {
+      // Hết phiên: vẫn hiện tên thư mục, yêu cầu nhấn Quét lại để cấp quyền lại
       setFolderStatus(
-        `<i class="fas fa-folder-closed" style="color:var(--text-muted)"></i> <span style="color:var(--text-muted)">${handle.name}</span> <span style="color:var(--danger);font-size:11px">— nhấn 🔄</span>`,
+        `<i class="fas fa-folder-closed" style="color:var(--text-muted)"></i> <span style="color:var(--text-muted)">${handle.name}</span> <span style="color:var(--danger);font-size:11px">— nhấn 🔄 để kết nối lại</span>`,
         true
       );
     }
@@ -1535,8 +1434,8 @@ async function init() {
     }
   }
 
-  // Tự động nạp audio: GitHub Pages hoặc File System API
-  await initAutoLoad();
+  // Restore thư mục tự động (File System Access API)
+  await restoreFolder();
 }
 
 init();
