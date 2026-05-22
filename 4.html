@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>LangAudio — Luyện Nghe</title>
+<title>CoHoAudio — Luyện Nghe</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -567,7 +567,7 @@ input[type=range]::-webkit-slider-thumb{
 <div class="sidebar">
   <div class="sb-head">
     <div class="logo">
-      <i class="fas fa-headphones-simple"></i>Lang<span>Audio</span>
+      <i class="fas fa-headphones-simple"></i>Co Ho<span>Audio</span>
     </div>
 
     <!-- URL Input -->
@@ -654,7 +654,7 @@ input[type=range]::-webkit-slider-thumb{
     <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Mở danh sách">
       <i class="fas fa-bars"></i>
     </button>
-    <div class="mobile-logo"><i class="fas fa-headphones-simple"></i>Lang<span>Audio</span></div>
+    <div class="mobile-logo"><i class="fas fa-headphones-simple"></i>Co Ho<span>Audio</span></div>
     <div class="mobile-now" id="mobileNow">—</div>
   </div>
 
@@ -1197,11 +1197,11 @@ function renderSegs() {
         </div>
         <div class="seg-field">
           <div class="sf-label">Bắt đầu</div>
-          <input type="text" inputmode="decimal" class="time-f" value="${secToMSS(parseT(seg.start))}" placeholder="0.00" oninput="updSeg('${t.id}',${i},'start',this.value)" onchange="refreshMarkers()">
+          <input type="text" class="time-f" value="${secToMSS(parseT(seg.start))}" placeholder="0.00" oninput="updSeg('${t.id}',${i},'start',this.value)" onchange="refreshMarkers()">
         </div>
         <div class="seg-field">
           <div class="sf-label">Kết thúc</div>
-          <input type="text" inputmode="decimal" class="time-f" value="${secToMSS(parseT(seg.end))}" placeholder="0.30" oninput="updSeg('${t.id}',${i},'end',this.value)" onchange="refreshMarkers()">
+          <input type="text" class="time-f" value="${secToMSS(parseT(seg.end))}" placeholder="0.30" oninput="updSeg('${t.id}',${i},'end',this.value)" onchange="refreshMarkers()">
         </div>
       </div>
       <div class="seg-btns">
