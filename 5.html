@@ -255,36 +255,6 @@ input::placeholder{color:var(--text-muted)}
   opacity:0;transition:opacity .2s;
 }
 .prog-wrap:hover .prog-fill::after{opacity:1}
-
-/* Time tooltip on progress bar */
-.prog-tooltip{
-  position:absolute;
-  top:-30px;
-  transform:translateX(-50%);
-  background:var(--card);
-  border:1px solid var(--border-lit);
-  border-radius:6px;
-  padding:3px 8px;
-  font-family:var(--mono);
-  font-size:12px;
-  font-weight:600;
-  color:var(--text);
-  pointer-events:none;
-  white-space:nowrap;
-  opacity:0;
-  transition:opacity .1s;
-  z-index:20;
-  box-shadow:0 2px 8px rgba(0,0,0,.4);
-}
-.prog-tooltip::after{
-  content:'';
-  position:absolute;bottom:-5px;left:50%;
-  transform:translateX(-50%);
-  border:5px solid transparent;
-  border-bottom:none;
-  border-top-color:var(--border-lit);
-}
-.prog-wrap:hover .prog-tooltip{opacity:1}
 .seg-markers{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
 .seg-mark{
   position:absolute;top:-3px;
@@ -710,9 +680,8 @@ input[type=range]::-webkit-slider-thumb{
       <div class="now-seg" id="nowSeg"></div>
 
       <!-- Progress bar -->
-      <div class="prog-wrap" id="progWrap" onclick="seekAudio(event)" onmousemove="progHover(event)" onmouseleave="progLeave()">
+      <div class="prog-wrap" id="progWrap" onclick="seekAudio(event)">
         <div class="prog-track" id="progTrack">
-          <div class="prog-tooltip" id="progTooltip">0:00</div>
           <div style="height:100%;background:var(--card);border-radius:3px;overflow:hidden;position:relative">
             <div class="prog-fill" id="progFill" style="width:0%"></div>
           </div>
@@ -1118,19 +1087,6 @@ function seekAudio(e) {
   const rect = document.getElementById('progTrack').getBoundingClientRect();
   const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
   aud.currentTime = pct * aud.duration;
-}
-
-function progHover(e) {
-  if (!aud.duration) return;
-  const rect    = document.getElementById('progTrack').getBoundingClientRect();
-  const pct     = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
-  const tip     = document.getElementById('progTooltip');
-  tip.textContent = fmtTime(pct * aud.duration);
-  tip.style.left  = (pct * 100) + '%';
-}
-
-function progLeave() {
-  // CSS transition handles fade-out via .prog-wrap:hover rule
 }
 
 function setVol(v) {
