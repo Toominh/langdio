@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>CoHoAudio — Luyện Nghe</title>
+<title>LangAudio — Luyện Nghe</title>
 <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:ital,wght@0,400;0,600;0,700;1,400&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
@@ -237,11 +237,7 @@ input::placeholder{color:var(--text-muted)}
 }
 
 /* Progress */
-.prog-wrap{
-  margin-bottom:7px;cursor:pointer;
-  /* vùng chạm rộng hơn mà không làm layout thay đổi */
-  padding:10px 0;margin-top:-10px;
-}
+.prog-wrap{margin-bottom:7px;cursor:pointer}
 .prog-track{
   height:5px;background:var(--card);border-radius:3px;
   position:relative;overflow:visible;
@@ -252,8 +248,8 @@ input::placeholder{color:var(--text-muted)}
   position:relative;
 }
 .prog-fill::after{
-  content:'';position:absolute;right:-6px;top:-5px;
-  width:16px;height:16px;border-radius:50%;
+  content:'';position:absolute;right:-5px;top:-4px;
+  width:13px;height:13px;border-radius:50%;
   background:var(--accent);
   box-shadow:0 0 8px var(--accent);
   opacity:0;transition:opacity .2s;
@@ -289,54 +285,6 @@ input::placeholder{color:var(--text-muted)}
   border-top-color:var(--border-lit);
 }
 .prog-wrap:hover .prog-tooltip{opacity:1}
-
-/* ─── SEEK DRAG BADGE (thời gian to khi kéo) ─────── */
-.seek-badge{
-  position:fixed;
-  left:50%;top:50%;
-  transform:translate(-50%,-50%) scale(.85);
-  background:rgba(11,11,16,.93);
-  border:2px solid var(--accent);
-  border-radius:20px;
-  padding:14px 36px;
-  font-family:var(--mono);
-  font-size:72px;font-weight:700;
-  color:var(--accent);
-  text-shadow:0 0 32px rgba(245,158,11,.65);
-  letter-spacing:5px;
-  z-index:500;
-  pointer-events:none;
-  opacity:0;
-  transition:opacity .12s,transform .12s;
-  white-space:nowrap;
-  box-shadow:0 8px 48px rgba(0,0,0,.85);
-  backdrop-filter:blur(10px);
-  -webkit-backdrop-filter:blur(10px);
-}
-.seek-badge.show{
-  opacity:1;
-  transform:translate(-50%,-50%) scale(1);
-}
-
-/* ─── MOBILE: progress bar to + nút kéo khổng lồ ─── */
-@media(max-width:700px){
-  .prog-wrap{
-    padding:18px 0;margin-top:-18px;
-  }
-  .prog-track{height:8px}
-  .prog-fill::after{
-    width:32px;height:32px;
-    right:-16px;top:-12px;
-    opacity:1!important;
-    box-shadow:0 0 14px var(--accent),
-               0 0 0 5px rgba(245,158,11,.2);
-  }
-  /* Badge to hơn trên mobile */
-  .seek-badge{
-    font-size:80px;
-    padding:16px 40px;
-  }
-}
 .seg-markers{position:absolute;top:0;left:0;right:0;bottom:0;pointer-events:none}
 .seg-mark{
   position:absolute;top:-3px;
@@ -649,7 +597,7 @@ input[type=range]::-webkit-slider-thumb{
 <div class="sidebar">
   <div class="sb-head">
     <div class="logo">
-      <i class="fas fa-headphones-simple"></i>Co Ho<span>Audio</span>
+      <i class="fas fa-headphones-simple"></i>Lang<span>Audio</span>
     </div>
 
     <!-- URL Input -->
@@ -736,7 +684,7 @@ input[type=range]::-webkit-slider-thumb{
     <button class="menu-toggle" onclick="toggleSidebar()" aria-label="Mở danh sách">
       <i class="fas fa-bars"></i>
     </button>
-    <div class="mobile-logo"><i class="fas fa-headphones-simple"></i>Co Ho<span>Audio</span></div>
+    <div class="mobile-logo"><i class="fas fa-headphones-simple"></i>Lang<span>Audio</span></div>
     <div class="mobile-now" id="mobileNow">—</div>
   </div>
 
@@ -761,11 +709,8 @@ input[type=range]::-webkit-slider-thumb{
       </div>
       <div class="now-seg" id="nowSeg"></div>
 
-      <!-- Seek drag badge (hiện khi kéo) -->
-      <div class="seek-badge" id="seekBadge">0:00</div>
-
       <!-- Progress bar -->
-      <div class="prog-wrap" id="progWrap" onmousemove="progHover(event)" onmouseleave="progLeave()">
+      <div class="prog-wrap" id="progWrap" onclick="seekAudio(event)" onmousemove="progHover(event)" onmouseleave="progLeave()">
         <div class="prog-track" id="progTrack">
           <div class="prog-tooltip" id="progTooltip">0:00</div>
           <div style="height:100%;background:var(--card);border-radius:3px;overflow:hidden;position:relative">
@@ -1168,64 +1113,25 @@ aud.addEventListener('canplay', () => {
   }
 });
 
-// ── Progress bar: mouse + touch drag ──────────────────
-let _seeking = false;
-
-function _seekPct(pct) {
+function seekAudio(e) {
   if (!aud.duration) return;
-  pct = Math.max(0, Math.min(1, pct));
-  aud.currentTime = pct * aud.duration;
-  const t = fmtTime(pct * aud.duration);
-  document.getElementById('seekBadge').textContent = t;
-  // Cập nhật thanh fill ngay lập tức khi kéo (không đợi timeupdate)
-  document.getElementById('progFill').style.width = (pct * 100) + '%';
-  document.getElementById('clockDisplay').textContent = t;
-  document.getElementById('curTime').textContent = t;
-}
-
-function _pctFromClient(clientX) {
   const rect = document.getElementById('progTrack').getBoundingClientRect();
-  return (clientX - rect.left) / rect.width;
+  const pct = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  aud.currentTime = pct * aud.duration;
 }
-
-function _startSeek(clientX) {
-  if (!aud.duration) return;
-  _seeking = true;
-  document.getElementById('seekBadge').classList.add('show');
-  _seekPct(_pctFromClient(clientX));
-}
-function _moveSeek(clientX) {
-  if (!_seeking) return;
-  _seekPct(_pctFromClient(clientX));
-}
-function _endSeek() {
-  if (!_seeking) return;
-  _seeking = false;
-  document.getElementById('seekBadge').classList.remove('show');
-}
-
-// Mouse
-const progWrap = document.getElementById('progWrap');
-progWrap.addEventListener('mousedown',  e => { e.preventDefault(); _startSeek(e.clientX); });
-document.addEventListener('mousemove',  e => _moveSeek(e.clientX));
-document.addEventListener('mouseup',    ()  => _endSeek());
-
-// Touch
-progWrap.addEventListener('touchstart', e => { e.preventDefault(); _startSeek(e.touches[0].clientX); }, {passive:false});
-document.addEventListener('touchmove',  e => { if (_seeking){ e.preventDefault(); _moveSeek(e.touches[0].clientX); } }, {passive:false});
-document.addEventListener('touchend',   ()  => _endSeek());
-
-function seekAudio(e) { /* kept for compat */ }
 
 function progHover(e) {
-  if (_seeking || !aud.duration) return;
-  const pct = Math.max(0, Math.min(1, _pctFromClient(e.clientX)));
-  const tip = document.getElementById('progTooltip');
+  if (!aud.duration) return;
+  const rect    = document.getElementById('progTrack').getBoundingClientRect();
+  const pct     = Math.max(0, Math.min(1, (e.clientX - rect.left) / rect.width));
+  const tip     = document.getElementById('progTooltip');
   tip.textContent = fmtTime(pct * aud.duration);
   tip.style.left  = (pct * 100) + '%';
 }
 
-function progLeave() { /* CSS handles fade via :hover */ }
+function progLeave() {
+  // CSS transition handles fade-out via .prog-wrap:hover rule
+}
 
 function setVol(v) {
   aud.volume = parseFloat(v);
