@@ -1,0 +1,95 @@
+{
+  "version": 3,
+  "exportedAt": "2026-06-12T15:45:04.734Z",
+  "tracks": [
+    {
+      "id": "ft81vv4mpghyiay",
+      "name": "Nghe lesson  01",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Nghe%20lesson%20%2001.mp3",
+      "type": "url",
+      "segments": [
+        {
+          "id": "jkys8aempgmz47j",
+          "name": "Đoạn 1",
+          "start": "0.35",
+          "end": "2.30"
+        },
+        {
+          "id": "sj1rtjumpgnoc3l",
+          "name": "Đoạn 2",
+          "start": "2.40",
+          "end": "4.38"
+        },
+        {
+          "id": "s3wzuq9mpgnp2kk",
+          "name": "Đoạn 3",
+          "start": "4.38",
+          "end": "7.33"
+        },
+        {
+          "id": "qt82naimpgnps13",
+          "name": "Đoạn 4",
+          "start": "7.33",
+          "end": "8.45"
+        },
+        {
+          "id": "g8py0g2mpgnq4re",
+          "name": "Đoạn 5",
+          "start": "8.45",
+          "end": "13.51"
+        },
+        {
+          "id": "02vtdoxmpgnqonn",
+          "name": "Đoạn 6",
+          "start": "13.51",
+          "end": "15.22"
+        },
+        {
+          "id": "cdq1d8mmpgnra2x",
+          "name": "Đoạn 7",
+          "start": "15.22",
+          "end": "15.41"
+        },
+        {
+          "id": "4cpo7s5mpgnrrut",
+          "name": "Đoạn 8",
+          "start": "15.41",
+          "end": "18.19"
+        },
+        {
+          "id": "2bq3xufmpgns2px",
+          "name": "Đoạn 9",
+          "start": "18.19",
+          "end": "18.49"
+        },
+        {
+          "id": "zj80gtkmpgnsb62",
+          "name": "Đoạn 10",
+          "start": "18.49",
+          "end": "21.00"
+        }
+      ]
+    },
+    {
+      "id": "pty75r9mpzn707k",
+      "name": "04 Bai 1--Exercixes",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/04%20Bai%201--Exercixes.mp3",
+      "type": "url",
+      "segments": [
+        {
+          "id": "9gpjmcumpzn7p5b",
+          "name": "Đoạn 1",
+          "start": "1.00",
+          "end": "1.30"
+        }
+      ]
+    },
+    {
+      "id": "hx4cqswmqb3hhkr",
+      "name": "Lesson 02",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Lesson%2002.mp3",
+      "type": "url",
+      "segments": []
+    }
+  ]
+}

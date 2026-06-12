@@ -189,83 +189,9 @@ input::placeholder{color:var(--text-muted)}
 .sb-bottom-row .btn{flex:1;font-size:13px;padding:8px 8px}
 .btn-danger-ghost{
   background:transparent;color:var(--danger);
-  border:1px solid rgba(248,113,113,0.35);flex:1;
+  border:1px solid rgba(248,113,113,0.35);width:100%;
 }
 .btn-danger-ghost:hover{background:var(--danger-dim);border-color:var(--danger)}
-
-.btn-load-data{
-  background:transparent;color:var(--accent2);
-  border:1px solid rgba(96,165,250,0.35);flex:1;
-}
-.btn-load-data:hover{background:var(--accent2-dim);border-color:var(--accent2)}
-.btn-load-data.active{background:var(--accent2-dim);border-color:var(--accent2)}
-
-/* Data picker panel */
-.data-picker{
-  display:none;
-  position:absolute;bottom:calc(100% + 8px);left:0;right:0;
-  background:var(--surface);
-  border:1px solid var(--border-lit);
-  border-radius:var(--radius);
-  box-shadow:0 -8px 32px rgba(0,0,0,.55);
-  z-index:200;
-  overflow:hidden;
-  animation:dpIn .15s ease;
-}
-.data-picker.open{display:block}
-@keyframes dpIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
-
-.dp-head{
-  display:flex;align-items:center;gap:7px;
-  padding:9px 12px;
-  border-bottom:1px solid var(--border);
-  font-size:13px;font-weight:700;color:var(--text-dim);
-  background:var(--card);
-}
-.dp-head code{
-  font-family:var(--mono);font-size:12px;
-  color:var(--accent2);background:var(--accent2-dim);
-  padding:1px 6px;border-radius:4px;
-}
-.dp-close{
-  margin-left:auto;width:22px;height:22px;border-radius:5px;
-  border:none;background:transparent;color:var(--text-muted);
-  cursor:pointer;display:flex;align-items:center;justify-content:center;
-  font-size:12px;transition:all .15s;
-}
-.dp-close:hover{background:var(--danger-dim);color:var(--danger)}
-
-.dp-list{max-height:200px;overflow-y:auto;padding:6px}
-.dp-loading{
-  padding:16px;text-align:center;
-  font-size:13px;color:var(--text-muted);font-family:var(--mono);
-  display:flex;align-items:center;justify-content:center;gap:7px;
-}
-.dp-empty{
-  padding:16px;text-align:center;
-  font-size:12px;color:var(--text-muted);line-height:1.6;
-}
-.dp-empty i{display:block;font-size:20px;margin-bottom:6px;opacity:.3}
-.dp-file{
-  display:flex;align-items:center;gap:9px;
-  padding:8px 10px;border-radius:7px;
-  cursor:pointer;transition:all .15s;
-  border:1px solid transparent;
-}
-.dp-file:hover{background:var(--card);border-color:var(--border)}
-.dp-file:active{background:var(--accent2-dim);border-color:var(--accent2)}
-.dp-file i{color:var(--accent2);font-size:13px;flex-shrink:0}
-.dp-fname{
-  flex:1;min-width:0;
-  font-size:13px;font-weight:700;color:var(--text);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  font-family:var(--mono);
-}
-.dp-fsize{font-size:11px;color:var(--text-muted);font-family:var(--mono);flex-shrink:0}
-.dp-err{
-  padding:10px 12px;font-size:12px;color:var(--danger);
-  font-family:var(--mono);display:flex;align-items:center;gap:6px;
-}
 
 /* ─── MAIN ───────────────────────────────────────── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
@@ -796,25 +722,9 @@ input[type=range]::-webkit-slider-thumb{
       </button>
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
     </div>
-    <div class="sb-bottom-row" style="position:relative">
-      <button class="btn btn-sm btn-load-data" id="loadDataBtn" onclick="toggleDataPicker()" title="Nạp dữ liệu từ thư mục data/">
-        <i class="fas fa-database"></i> Nạp dữ liệu
-      </button>
-      <button class="btn btn-sm btn-danger-ghost" onclick="clearStorage()" title="Xóa toàn bộ dữ liệu đã lưu">
-        <i class="fas fa-trash-can"></i> Xóa bộ nhớ
-      </button>
-      <!-- Data picker panel -->
-      <div class="data-picker" id="dataPicker">
-        <div class="dp-head">
-          <i class="fas fa-folder-open" style="color:var(--accent2)"></i>
-          <span>Thư mục <code>data/</code></span>
-          <button class="dp-close" onclick="closeDataPicker()"><i class="fas fa-xmark"></i></button>
-        </div>
-        <div class="dp-list" id="dpList">
-          <div class="dp-loading"><i class="fas fa-circle-notch fa-spin"></i> Đang tải...</div>
-        </div>
-      </div>
-    </div>
+    <button class="btn btn-sm btn-danger-ghost" onclick="clearStorage()" title="Xóa toàn bộ dữ liệu đã lưu">
+      <i class="fas fa-trash-can"></i> Xóa sạch bộ nhớ
+    </button>
   </div>
 </div>
 
@@ -1852,123 +1762,8 @@ async function initAutoLoad() {
 }
 
 // ══════════════════════════════════════════════════════
-// NẠP DỮ LIỆU TỪ THƯ MỤC data/
+// INIT
 // ══════════════════════════════════════════════════════
-let _dataPickerOpen = false;
-
-function closeDataPicker() {
-  _dataPickerOpen = false;
-  document.getElementById('dataPicker').classList.remove('open');
-  document.getElementById('loadDataBtn').classList.remove('active');
-}
-
-async function toggleDataPicker() {
-  if (_dataPickerOpen) { closeDataPicker(); return; }
-  _dataPickerOpen = true;
-  document.getElementById('dataPicker').classList.add('open');
-  document.getElementById('loadDataBtn').classList.add('active');
-  await refreshDataList();
-}
-
-// Đóng khi click bên ngoài
-document.addEventListener('click', e => {
-  if (!_dataPickerOpen) return;
-  const picker = document.getElementById('dataPicker');
-  const btn    = document.getElementById('loadDataBtn');
-  if (!picker.contains(e.target) && !btn.contains(e.target)) closeDataPicker();
-});
-
-async function refreshDataList() {
-  const list = document.getElementById('dpList');
-  list.innerHTML = '<div class="dp-loading"><i class="fas fa-circle-notch fa-spin"></i> Đang tìm file JSON…</div>';
-
-  try {
-    // Thử fetch thư mục data/ — server trả về HTML directory listing
-    const res = await fetch('./data/');
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const html = await res.text();
-
-    // Parse các link .json từ HTML directory listing
-    const doc   = new DOMParser().parseFromString(html, 'text/html');
-    const links = Array.from(doc.querySelectorAll('a[href]'))
-      .map(a => a.getAttribute('href'))
-      .filter(h => h && /\.json$/i.test(h) && !h.startsWith('?') && !h.startsWith('..'));
-
-    if (!links.length) {
-      list.innerHTML = `<div class="dp-empty"><i class="fas fa-folder-open"></i>Không có file <code>.json</code> nào<br>trong thư mục <code>data/</code></div>`;
-      return;
-    }
-
-    list.innerHTML = links.map(href => {
-      const name = decodeURIComponent(href.replace(/\/$/, '').split('/').pop());
-      return `<div class="dp-file" onclick="loadDataFile('${href}','${esc(name)}')">
-        <i class="fas fa-file-code"></i>
-        <span class="dp-fname" title="${esc(name)}">${esc(name)}</span>
-        <i class="fas fa-arrow-right" style="font-size:11px;color:var(--text-muted)"></i>
-      </div>`;
-    }).join('');
-
-  } catch(e) {
-    list.innerHTML = `<div class="dp-err"><i class="fas fa-triangle-exclamation"></i>
-      Không đọc được thư mục <code>data/</code><br>
-      <span style="color:var(--text-muted);font-size:11px;margin-top:3px;display:block">
-        Cần chạy qua HTTP server (VD: <code>python -m http.server</code>)
-      </span></div>`;
-  }
-}
-
-async function loadDataFile(href, displayName) {
-  closeDataPicker();
-  try {
-    const res = await fetch('./data/' + href.split('/').pop());
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    const d = await res.json();
-
-    if (!Array.isArray(d.tracks)) throw new Error('Không tìm thấy trường "tracks" trong file');
-
-    const merge = confirm(
-      `Nạp dữ liệu từ "${displayName}"?\n\n` +
-      `File chứa ${d.tracks.length} bài audio với các đoạn nghe đã cài sẵn.\n\n` +
-      `• OK = Thay thế toàn bộ dữ liệu hiện tại\n` +
-      `• Huỷ = Không làm gì`
-    );
-    if (!merge) return;
-
-    S.tracks = d.tracks.map(t => ({
-      id:       t.id       || uid(),
-      name:     t.name     || 'Unknown',
-      src:      t.src      || '',
-      type:     t.type     || 'url',
-      segments: (t.segments || []).map(s => ({
-        id:    s.id    || uid(),
-        name:  s.name  || '',
-        start: secToMSS(parseT(s.start != null ? String(s.start) : '0')),
-        end:   secToMSS(parseT(s.end   != null ? String(s.end)   : '0.30')),
-      })),
-    }));
-
-    S.activeId = null; S.activeSeg = -1;
-    aud.pause(); aud.src = '';
-    document.getElementById('playIcon').className = 'fas fa-play';
-    document.getElementById('clockDisplay').textContent = '0:00';
-
-    const ps = document.getElementById('playerSection');
-    ps.classList.add('hidden'); ps.style.display = '';
-    document.getElementById('emptyState').classList.remove('hidden');
-    save(); renderPl();
-
-    toast(`✓ Đã nạp "${displayName}" — ${S.tracks.length} bài`, 'ok');
-
-    // Tự chọn track URL đầu tiên nếu có
-    const firstUrl = S.tracks.find(t => t.type === 'url' && t.src);
-    if (firstUrl) setTimeout(() => selectTrack(firstUrl.id), 80);
-
-  } catch(err) {
-    toast('Lỗi nạp dữ liệu: ' + err.message, 'err');
-  }
-}
-
-
 async function init() {
   load();
   renderPl();
