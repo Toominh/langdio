@@ -200,22 +200,25 @@ input::placeholder{color:var(--text-muted)}
 .btn-load-data:hover{background:var(--accent2-dim);border-color:var(--accent2)}
 .btn-load-data.active{background:var(--accent2-dim);border-color:var(--accent2)}
 
-/* ─── DATA PICKER PANEL ──────────────────────────── */
+/* Data picker panel */
 .data-picker{
   display:none;
   position:absolute;bottom:calc(100% + 8px);left:0;right:0;
   background:var(--surface);
   border:1px solid var(--border-lit);
   border-radius:var(--radius);
-  box-shadow:0 -8px 32px rgba(0,0,0,.6);
-  z-index:200;overflow:hidden;
+  box-shadow:0 -8px 32px rgba(0,0,0,.55);
+  z-index:200;
+  overflow:hidden;
   animation:dpIn .15s ease;
 }
 .data-picker.open{display:block}
 @keyframes dpIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+
 .dp-head{
   display:flex;align-items:center;gap:7px;
-  padding:9px 12px;border-bottom:1px solid var(--border);
+  padding:9px 12px;
+  border-bottom:1px solid var(--border);
   font-size:13px;font-weight:700;color:var(--text-dim);
   background:var(--card);
 }
@@ -231,6 +234,7 @@ input::placeholder{color:var(--text-muted)}
   font-size:12px;transition:all .15s;
 }
 .dp-close:hover{background:var(--danger-dim);color:var(--danger)}
+
 .dp-list{max-height:200px;overflow-y:auto;padding:6px}
 .dp-loading{
   padding:16px;text-align:center;
@@ -239,30 +243,29 @@ input::placeholder{color:var(--text-muted)}
 }
 .dp-empty{
   padding:16px;text-align:center;
-  font-size:12px;color:var(--text-muted);line-height:1.7;
+  font-size:12px;color:var(--text-muted);line-height:1.6;
 }
 .dp-empty i{display:block;font-size:20px;margin-bottom:6px;opacity:.3}
 .dp-file{
   display:flex;align-items:center;gap:9px;
-  padding:9px 10px;border-radius:7px;
+  padding:8px 10px;border-radius:7px;
   cursor:pointer;transition:all .15s;
   border:1px solid transparent;
 }
 .dp-file:hover{background:var(--card);border-color:var(--border)}
-.dp-file:active{background:var(--accent2-dim)}
-.dp-file-icon{color:var(--accent2);font-size:13px;flex-shrink:0}
+.dp-file:active{background:var(--accent2-dim);border-color:var(--accent2)}
+.dp-file i{color:var(--accent2);font-size:13px;flex-shrink:0}
 .dp-fname{
   flex:1;min-width:0;
   font-size:13px;font-weight:700;color:var(--text);
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   font-family:var(--mono);
 }
+.dp-fsize{font-size:11px;color:var(--text-muted);font-family:var(--mono);flex-shrink:0}
 .dp-err{
-  padding:12px;font-size:12px;color:var(--danger);
-  font-family:var(--mono);line-height:1.6;
-  display:flex;flex-direction:column;gap:4px;
+  padding:10px 12px;font-size:12px;color:var(--danger);
+  font-family:var(--mono);display:flex;align-items:center;gap:6px;
 }
-.dp-err-hint{color:var(--text-muted);font-size:11px}
 
 /* ─── MAIN ───────────────────────────────────────── */
 .main{flex:1;display:flex;flex-direction:column;overflow:hidden;min-width:0}
@@ -794,7 +797,7 @@ input[type=range]::-webkit-slider-thumb{
       <input type="file" id="importFile" accept=".json" style="display:none" onchange="importData(this)">
     </div>
     <div class="sb-bottom-row" style="position:relative">
-      <button class="btn btn-sm btn-load-data" id="loadDataBtn" onclick="toggleDataPicker()">
+      <button class="btn btn-sm btn-load-data" id="loadDataBtn" onclick="toggleDataPicker()" title="Nạp dữ liệu từ thư mục data/">
         <i class="fas fa-database"></i> Nạp dữ liệu
       </button>
       <button class="btn btn-sm btn-danger-ghost" onclick="clearStorage()" title="Xóa toàn bộ dữ liệu đã lưu">
@@ -808,7 +811,7 @@ input[type=range]::-webkit-slider-thumb{
           <button class="dp-close" onclick="closeDataPicker()"><i class="fas fa-xmark"></i></button>
         </div>
         <div class="dp-list" id="dpList">
-          <div class="dp-loading"><i class="fas fa-circle-notch fa-spin"></i> Đang tải…</div>
+          <div class="dp-loading"><i class="fas fa-circle-notch fa-spin"></i> Đang tải...</div>
         </div>
       </div>
     </div>
@@ -1849,27 +1852,27 @@ async function initAutoLoad() {
 }
 
 // ══════════════════════════════════════════════════════
-// ══════════════════════════════════════════════════════
 // NẠP DỮ LIỆU TỪ THƯ MỤC data/
 // ══════════════════════════════════════════════════════
-let _dpOpen = false;
+let _dataPickerOpen = false;
 
 function closeDataPicker() {
-  _dpOpen = false;
+  _dataPickerOpen = false;
   document.getElementById('dataPicker').classList.remove('open');
   document.getElementById('loadDataBtn').classList.remove('active');
 }
 
 async function toggleDataPicker() {
-  if (_dpOpen) { closeDataPicker(); return; }
-  _dpOpen = true;
+  if (_dataPickerOpen) { closeDataPicker(); return; }
+  _dataPickerOpen = true;
   document.getElementById('dataPicker').classList.add('open');
   document.getElementById('loadDataBtn').classList.add('active');
   await refreshDataList();
 }
 
+// Đóng khi click bên ngoài
 document.addEventListener('click', e => {
-  if (!_dpOpen) return;
+  if (!_dataPickerOpen) return;
   const picker = document.getElementById('dataPicker');
   const btn    = document.getElementById('loadDataBtn');
   if (!picker.contains(e.target) && !btn.contains(e.target)) closeDataPicker();
@@ -1879,115 +1882,68 @@ async function refreshDataList() {
   const list = document.getElementById('dpList');
   list.innerHTML = '<div class="dp-loading"><i class="fas fa-circle-notch fa-spin"></i> Đang tìm file JSON…</div>';
 
-  // Thử GitHub API trước (khi chạy trên GitHub Pages)
-  const gh = detectGitHub();
-  if (gh) {
-    await _loadFromGitHubAPI(gh, list);
-    return;
-  }
-
-  // Fallback: fetch directory listing (Python HTTP server local)
   try {
+    // Thử fetch thư mục data/ — server trả về HTML directory listing
     const res = await fetch('./data/');
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const html = await res.text();
-    const doc  = new DOMParser().parseFromString(html, 'text/html');
+
+    // Parse các link .json từ HTML directory listing
+    const doc   = new DOMParser().parseFromString(html, 'text/html');
     const links = Array.from(doc.querySelectorAll('a[href]'))
       .map(a => a.getAttribute('href'))
       .filter(h => h && /\.json$/i.test(h) && !h.startsWith('?') && !h.startsWith('..'));
 
-    _renderFileList(list, links.map(h => decodeURIComponent(h.split('/').pop())));
-  } catch(e) {
-    list.innerHTML = `<div class="dp-err">
-      <span><i class="fas fa-triangle-exclamation"></i> Không đọc được thư mục <code>data/</code></span>
-      <span class="dp-err-hint">Cần chạy qua HTTP server: <code>python -m http.server</code></span>
-    </div>`;
-  }
-}
-
-async function _loadFromGitHubAPI({ owner, repo }, list) {
-  // Tính đường dẫn subfolder nếu trang nằm trong subpath
-  const parts = window.location.pathname.split('/').filter(Boolean);
-  // parts[0] là repo name (project page) hoặc rỗng (user page)
-  const subdir = parts.length > 1 ? parts.slice(1, -1).join('/') + '/' : '';
-  const apiUrl = `https://api.github.com/repos/${owner}/${repo}/contents/${subdir}data`;
-
-  try {
-    const res = await fetch(apiUrl, {
-      headers: { 'Accept': 'application/vnd.github.v3+json' }
-    });
-
-    if (res.status === 404) {
-      list.innerHTML = `<div class="dp-err">
-        <span><i class="fas fa-triangle-exclamation"></i> Không tìm thấy thư mục <code>data/</code> trên repo</span>
-        <span class="dp-err-hint">Kiểm tra lại repo: <b>${owner}/${repo}</b></span>
-      </div>`;
+    if (!links.length) {
+      list.innerHTML = `<div class="dp-empty"><i class="fas fa-folder-open"></i>Không có file <code>.json</code> nào<br>trong thư mục <code>data/</code></div>`;
       return;
     }
-    if (res.status === 403) {
-      list.innerHTML = `<div class="dp-err">
-        <span><i class="fas fa-lock"></i> GitHub API rate limit</span>
-        <span class="dp-err-hint">Thử lại sau vài phút</span>
+
+    list.innerHTML = links.map(href => {
+      const name = decodeURIComponent(href.replace(/\/$/, '').split('/').pop());
+      return `<div class="dp-file" onclick="loadDataFile('${href}','${esc(name)}')">
+        <i class="fas fa-file-code"></i>
+        <span class="dp-fname" title="${esc(name)}">${esc(name)}</span>
+        <i class="fas fa-arrow-right" style="font-size:11px;color:var(--text-muted)"></i>
       </div>`;
-      return;
-    }
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    }).join('');
 
-    const files = await res.json();
-    const jsonFiles = files
-      .filter(f => f.type === 'file' && /\.json$/i.test(f.name))
-      .map(f => f.name);
-
-    _renderFileList(list, jsonFiles);
   } catch(e) {
-    list.innerHTML = `<div class="dp-err">
-      <span><i class="fas fa-triangle-exclamation"></i> Lỗi GitHub API: ${e.message}</span>
-    </div>`;
+    list.innerHTML = `<div class="dp-err"><i class="fas fa-triangle-exclamation"></i>
+      Không đọc được thư mục <code>data/</code><br>
+      <span style="color:var(--text-muted);font-size:11px;margin-top:3px;display:block">
+        Cần chạy qua HTTP server (VD: <code>python -m http.server</code>)
+      </span></div>`;
   }
 }
 
-function _renderFileList(list, files) {
-  if (!files.length) {
-    list.innerHTML = `<div class="dp-empty">
-      <i class="fas fa-folder-open"></i>
-      Không có file <code>.json</code> nào<br>trong thư mục <code>data/</code>
-    </div>`;
-    return;
-  }
-  list.innerHTML = files.map(name => `
-    <div class="dp-file" onclick="loadDataFile(${JSON.stringify(name)})">
-      <i class="fas fa-file-code dp-file-icon"></i>
-      <span class="dp-fname" title="${esc(name)}">${esc(name)}</span>
-      <i class="fas fa-arrow-right" style="font-size:11px;color:var(--text-muted)"></i>
-    </div>`).join('');
-}
-
-async function loadDataFile(name) {
+async function loadDataFile(href, displayName) {
   closeDataPicker();
   try {
-    const res = await fetch(`./data/${encodeURIComponent(name)}`);
+    const res = await fetch('./data/' + href.split('/').pop());
     if (!res.ok) throw new Error(`HTTP ${res.status}`);
     const d = await res.json();
 
-    if (!Array.isArray(d.tracks)) throw new Error('File thiếu trường "tracks"');
+    if (!Array.isArray(d.tracks)) throw new Error('Không tìm thấy trường "tracks" trong file');
 
-    const ok = confirm(
-      `Nạp dữ liệu từ "${name}"?\n\n` +
-      `File chứa ${d.tracks.length} bài audio.\n\n` +
-      `OK = Thay thế toàn bộ dữ liệu hiện tại\nHuỷ = Không làm gì`
+    const merge = confirm(
+      `Nạp dữ liệu từ "${displayName}"?\n\n` +
+      `File chứa ${d.tracks.length} bài audio với các đoạn nghe đã cài sẵn.\n\n` +
+      `• OK = Thay thế toàn bộ dữ liệu hiện tại\n` +
+      `• Huỷ = Không làm gì`
     );
-    if (!ok) return;
+    if (!merge) return;
 
     S.tracks = d.tracks.map(t => ({
-      id:       t.id   || uid(),
-      name:     t.name || 'Unknown',
-      src:      t.src  || '',
-      type:     t.type || 'url',
+      id:       t.id       || uid(),
+      name:     t.name     || 'Unknown',
+      src:      t.src      || '',
+      type:     t.type     || 'url',
       segments: (t.segments || []).map(s => ({
-        id:    s.id   || uid(),
-        name:  s.name || '',
-        start: secToMSS(parseT(String(s.start ?? '0'))),
-        end:   secToMSS(parseT(String(s.end   ?? '0.30'))),
+        id:    s.id    || uid(),
+        name:  s.name  || '',
+        start: secToMSS(parseT(s.start != null ? String(s.start) : '0')),
+        end:   secToMSS(parseT(s.end   != null ? String(s.end)   : '0.30')),
       })),
     }));
 
@@ -1995,20 +1951,24 @@ async function loadDataFile(name) {
     aud.pause(); aud.src = '';
     document.getElementById('playIcon').className = 'fas fa-play';
     document.getElementById('clockDisplay').textContent = '0:00';
-    document.getElementById('playerSection').classList.add('hidden');
+
+    const ps = document.getElementById('playerSection');
+    ps.classList.add('hidden'); ps.style.display = '';
     document.getElementById('emptyState').classList.remove('hidden');
     save(); renderPl();
-    toast(`✓ Đã nạp "${name}" — ${S.tracks.length} bài`, 'ok');
 
+    toast(`✓ Đã nạp "${displayName}" — ${S.tracks.length} bài`, 'ok');
+
+    // Tự chọn track URL đầu tiên nếu có
     const firstUrl = S.tracks.find(t => t.type === 'url' && t.src);
     if (firstUrl) setTimeout(() => selectTrack(firstUrl.id), 80);
+
   } catch(err) {
     toast('Lỗi nạp dữ liệu: ' + err.message, 'err');
   }
 }
 
-// INIT
-// ══════════════════════════════════════════════════════
+
 async function init() {
   load();
   renderPl();
