@@ -1971,23 +1971,16 @@ async function loadDataFile(name) {
 
     if (!Array.isArray(d.tracks)) throw new Error('File thiếu trường "tracks"');
 
-    const ok = confirm(
-      `Nạp dữ liệu từ "${name}"?\n\n` +
-      `File chứa ${d.tracks.length} bài audio.\n\n` +
-      `OK = Thay thế toàn bộ dữ liệu hiện tại\nHuỷ = Không làm gì`
-    );
-    if (!ok) return;
-
     S.tracks = d.tracks.map(t => ({
-      id:       t.id   || uid(),
-      name:     t.name || 'Unknown',
-      src:      t.src  || '',
-      type:     t.type || 'url',
-      segments: (t.segments || []).map(s => ({
-        id:    s.id   || uid(),
-        name:  s.name || '',
-        start: secToMSS(parseT(String(s.start ?? '0'))),
-        end:   secToMSS(parseT(String(s.end   ?? '0.30'))),
+      id:       t.id       || uid(),
+      name:     t.name     || 'Unknown',
+      src:      t.src      || '',
+      type:     t.type     || 'url',
+      segments: (t.segments||[]).map(s => ({
+        id:    s.id    || uid(),
+        name:  s.name  || '',
+        start: secToMSS(parseT(s.start != null ? String(s.start) : '0')),
+        end:   secToMSS(parseT(s.end   != null ? String(s.end)   : '0.30')),
       })),
     }));
 
@@ -1995,13 +1988,14 @@ async function loadDataFile(name) {
     aud.pause(); aud.src = '';
     document.getElementById('playIcon').className = 'fas fa-play';
     document.getElementById('clockDisplay').textContent = '0:00';
-    document.getElementById('playerSection').classList.add('hidden');
+    const ps = document.getElementById('playerSection');
+    ps.classList.add('hidden'); ps.style.display = '';
     document.getElementById('emptyState').classList.remove('hidden');
     save(); renderPl();
     toast(`✓ Đã nạp "${name}" — ${S.tracks.length} bài`, 'ok');
 
     const firstUrl = S.tracks.find(t => t.type === 'url' && t.src);
-    if (firstUrl) setTimeout(() => selectTrack(firstUrl.id), 80);
+    if (firstUrl) setTimeout(() => selectTrack(firstUrl.id), 50);
   } catch(err) {
     toast('Lỗi nạp dữ liệu: ' + err.message, 'err');
   }
