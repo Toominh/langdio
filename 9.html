@@ -872,11 +872,11 @@ input[type=range]::-webkit-slider-thumb{
       <!-- Controls -->
       <div class="controls">
         <button class="ctrl" onclick="prevTrack()" title="Bài trước [P]"><i class="fas fa-backward-step"></i></button>
-        <button class="ctrl" onclick="seekRel(-5)" title="Tua lùi 5 giây [←]"><i class="fas fa-rotate-left"></i><span style="font-size:10px;margin-left:2px">5</span></button>
+        <button class="ctrl" onclick="prevSeg()" title="Đoạn trước [←]"><i class="fas fa-backward"></i></button>
         <button class="play-ctrl" id="playBtn" onclick="togglePlay()" title="Phát/Dừng [Space]">
           <i class="fas fa-play" id="playIcon"></i>
         </button>
-        <button class="ctrl" onclick="seekRel(5)" title="Tua tới 5 giây [→]"><i class="fas fa-rotate-right"></i><span style="font-size:10px;margin-left:2px">5</span></button>
+        <button class="ctrl" onclick="nextSeg()" title="Đoạn sau [→]"><i class="fas fa-forward"></i></button>
         <button class="ctrl" onclick="nextTrack()" title="Bài sau [N]"><i class="fas fa-forward-step"></i></button>
         <button class="ctrl" id="loopSegBtn" onclick="toggleLoopSeg()" title="Lặp đoạn [R]">
           <i class="fas fa-rotate-right"></i>
@@ -1347,12 +1347,7 @@ function nextSeg() {
   playSeg(ni);
 }
 
-function seekRel(sec) {
-  if (!aud.src || isNaN(aud.duration)) return;
-  aud.currentTime = Math.max(0, Math.min(aud.duration, aud.currentTime + sec));
-}
-
-
+function playSeg(idx) {
   const t = getTrack();
   if (!t || !t.segments[idx]) return;
   if (!aud.src) return;
@@ -1500,8 +1495,8 @@ document.addEventListener('keydown', e => {
 
   switch(e.code) {
     case 'Space':   e.preventDefault(); togglePlay(); break;
-    case 'ArrowLeft':  e.preventDefault(); seekRel(-5); break;
-    case 'ArrowRight': e.preventDefault(); seekRel(5);  break;
+    case 'ArrowLeft': e.preventDefault(); prevSeg(); break;
+    case 'ArrowRight': e.preventDefault(); nextSeg(); break;
     case 'ArrowUp':
       e.preventDefault();
       aud.volume = Math.min(1, aud.volume + 0.1);
