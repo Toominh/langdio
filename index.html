@@ -1946,6 +1946,8 @@ async function _loadFromGitHubAPI({ owner, repo }, list) {
   }
 }
 
+let _dpFiles = [];
+
 function _renderFileList(list, files) {
   if (!files.length) {
     list.innerHTML = `<div class="dp-empty">
@@ -1954,8 +1956,9 @@ function _renderFileList(list, files) {
     </div>`;
     return;
   }
-  list.innerHTML = files.map(name => `
-    <div class="dp-file" onclick="loadDataFile(${JSON.stringify(name)})">
+  _dpFiles = files;
+  list.innerHTML = files.map((name, i) => `
+    <div class="dp-file" onclick="loadDataFile(_dpFiles[${i}])">
       <i class="fas fa-file-code dp-file-icon"></i>
       <span class="dp-fname" title="${esc(name)}">${esc(name)}</span>
       <i class="fas fa-arrow-right" style="font-size:11px;color:var(--text-muted)"></i>
