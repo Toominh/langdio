@@ -2348,10 +2348,11 @@ async function init() {
   }
 
   // Tự động nạp audio: GitHub Pages hoặc File System API
+  const isFirstVisit = !localStorage.getItem(STORE_KEY);
   await initAutoLoad();
 
   // Lần đầu mở trang (chưa có dữ liệu) → tự nạp Nap.json
-  if (!localStorage.getItem(STORE_KEY)) {
+  if (isFirstVisit) {
     await loadDataFile('Nap.json');
   }
 }
