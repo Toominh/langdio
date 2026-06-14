@@ -691,10 +691,15 @@ input[type=range]::-webkit-slider-thumb{
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
   margin-bottom:3px;
 }
-.doc-url{
-  font-size:11px;color:var(--text-muted);font-family:var(--mono);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+.doc-url{display:none}
+.doc-edit{
+  width:30px;height:30px;border-radius:7px;border:none;
+  background:transparent;color:var(--text-muted);cursor:pointer;
+  display:flex;align-items:center;justify-content:center;
+  transition:all .15s;font-size:13px;flex-shrink:0;opacity:0;
 }
+.doc-item:hover .doc-edit{opacity:1}
+.doc-edit:hover{background:var(--accent-dim);color:var(--accent)}
 .doc-open{
   width:30px;height:30px;border-radius:7px;border:none;
   background:transparent;color:var(--text-muted);cursor:pointer;
@@ -1023,12 +1028,12 @@ input[type=range]::-webkit-slider-thumb{
 
   </div><!-- /playerSection -->
 
-  <!-- Modal thêm tài liệu -->
+  <!-- Modal thêm / sửa tài liệu -->
   <div class="modal-overlay" id="docModal">
     <div class="modal">
       <div class="modal-head">
-        <i class="fas fa-file-circle-plus"></i>
-        <span class="modal-head-title">Thêm tài liệu</span>
+        <i id="docModalIcon" class="fas fa-file-circle-plus"></i>
+        <span class="modal-head-title" id="docModalTitle">Thêm tài liệu</span>
         <button class="modal-close" onclick="closeDocModal()"><i class="fas fa-xmark"></i></button>
       </div>
       <div class="modal-body">
@@ -1043,8 +1048,33 @@ input[type=range]::-webkit-slider-thumb{
       </div>
       <div class="modal-foot">
         <button class="btn btn-ghost btn-sm" onclick="closeDocModal()">Hủy</button>
-        <button class="btn btn-accent btn-sm" onclick="saveDoc()">
+        <button class="btn btn-accent btn-sm" id="docModalSaveBtn" onclick="saveDoc()">
           <i class="fas fa-plus"></i> Thêm
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Modal xác nhận xóa tài liệu -->
+  <div class="modal-overlay" id="docConfirmModal">
+    <div class="modal" style="max-width:360px">
+      <div class="modal-head">
+        <i class="fas fa-triangle-exclamation" style="color:var(--danger)"></i>
+        <span class="modal-head-title">Xác nhận xóa</span>
+        <button class="modal-close" onclick="closeConfirmModal()"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size:14px;color:var(--text-dim);line-height:1.6">
+          Bạn có chắc muốn xóa tài liệu<br>
+          <strong id="confirmDocName" style="color:var(--text)"></strong> không?
+        </p>
+      </div>
+      <div class="modal-foot">
+        <button class="btn btn-ghost btn-sm" onclick="closeConfirmModal()">Hủy</button>
+        <button class="btn btn-sm" id="confirmDelBtn"
+          style="background:var(--danger);color:#fff;border:none"
+          onclick="confirmDeleteDoc()">
+          <i class="fas fa-trash-can"></i> Xóa
         </button>
       </div>
     </div>
@@ -2156,7 +2186,6 @@ function saveDocs() {
 function renderDocs() {
   const list = document.getElementById('docList');
   const empty = document.getElementById('docEmpty');
-  // Remove existing doc items (keep empty placeholder in DOM)
   list.querySelectorAll('.doc-item').forEach(el => el.remove());
   if (!_docs.length) {
     empty.style.display = '';
@@ -2166,25 +2195,56 @@ function renderDocs() {
   _docs.forEach((doc, i) => {
     const el = document.createElement('div');
     el.className = 'doc-item';
+    const safeUrl = esc(doc.url);
+    const safeName = esc(doc.name);
     el.innerHTML = `
-      <div class="doc-icon"><i class="fas fa-file-lines"></i></div>
-      <div class="doc-info">
-        <div class="doc-name" title="${esc(doc.name)}">${esc(doc.name)}</div>
-        <div class="doc-url" title="${esc(doc.url)}">${esc(doc.url)}</div>
+      <div class="doc-icon" style="cursor:pointer" title="Mở tài liệu" onclick="openDocLink(${i})">
+        <i class="fas fa-file-lines"></i>
       </div>
-      <button class="doc-open" title="Mở tài liệu" onclick="window.open(${JSON.stringify(doc.url)},'_blank')">
+      <div class="doc-info" style="cursor:pointer" title="Mở tài liệu" onclick="openDocLink(${i})">
+        <div class="doc-name" title="${safeUrl}">${safeName}</div>
+      </div>
+      <button class="doc-edit" title="Sửa tài liệu" onclick="editDoc(${i})">
+        <i class="fas fa-pen"></i>
+      </button>
+      <button class="doc-open" title="Mở tài liệu" onclick="openDocLink(${i})">
         <i class="fas fa-arrow-up-right-from-square"></i>
       </button>
-      <button class="doc-del" title="Xóa" onclick="deleteDoc(${i})">
+      <button class="doc-del" title="Xóa" onclick="askDeleteDoc(${i})">
         <i class="fas fa-trash-can"></i>
       </button>`;
     list.insertBefore(el, empty);
   });
 }
 
+function openDocLink(i) {
+  const doc = _docs[i];
+  if (!doc) return;
+  window.open(doc.url, '_blank', 'noopener,noreferrer');
+}
+
+let _editDocIdx = null; // null = thêm mới, số = đang sửa
+
 function openDocModal() {
+  _editDocIdx = null;
   document.getElementById('docNameInput').value = '';
   document.getElementById('docUrlInput').value = '';
+  document.getElementById('docModalIcon').className = 'fas fa-file-circle-plus';
+  document.getElementById('docModalTitle').textContent = 'Thêm tài liệu';
+  document.getElementById('docModalSaveBtn').innerHTML = '<i class="fas fa-plus"></i> Thêm';
+  document.getElementById('docModal').classList.add('open');
+  setTimeout(() => document.getElementById('docNameInput').focus(), 80);
+}
+
+function editDoc(i) {
+  const doc = _docs[i];
+  if (!doc) return;
+  _editDocIdx = i;
+  document.getElementById('docNameInput').value = doc.name;
+  document.getElementById('docUrlInput').value = doc.url;
+  document.getElementById('docModalIcon').className = 'fas fa-pen';
+  document.getElementById('docModalTitle').textContent = 'Sửa tài liệu';
+  document.getElementById('docModalSaveBtn').innerHTML = '<i class="fas fa-check"></i> Lưu';
   document.getElementById('docModal').classList.add('open');
   setTimeout(() => document.getElementById('docNameInput').focus(), 80);
 }
@@ -2198,19 +2258,39 @@ function saveDoc() {
   const url  = document.getElementById('docUrlInput').value.trim();
   if (!name) { toast('Vui lòng nhập tên tài liệu', 'err'); return; }
   if (!url)  { toast('Vui lòng nhập đường dẫn URL', 'err'); return; }
-  // Thêm https:// nếu thiếu scheme
   const finalUrl = /^https?:\/\//i.test(url) ? url : 'https://' + url;
-  _docs.push({ id: uid(), name, url: finalUrl });
+  if (_editDocIdx !== null) {
+    _docs[_editDocIdx] = { ..._docs[_editDocIdx], name, url: finalUrl };
+    toast('✓ Đã cập nhật tài liệu', 'ok');
+  } else {
+    _docs.push({ id: uid(), name, url: finalUrl });
+    toast('✓ Đã thêm tài liệu', 'ok');
+  }
   saveDocs();
   renderDocs();
   closeDocModal();
-  toast('✓ Đã thêm tài liệu', 'ok');
 }
 
-function deleteDoc(i) {
-  _docs.splice(i, 1);
+let _pendingDeleteIdx = null;
+
+function askDeleteDoc(i) {
+  _pendingDeleteIdx = i;
+  const doc = _docs[i];
+  document.getElementById('confirmDocName').textContent = doc ? `"${doc.name}"` : '';
+  document.getElementById('docConfirmModal').classList.add('open');
+}
+
+function closeConfirmModal() {
+  document.getElementById('docConfirmModal').classList.remove('open');
+  _pendingDeleteIdx = null;
+}
+
+function confirmDeleteDoc() {
+  if (_pendingDeleteIdx === null) return;
+  _docs.splice(_pendingDeleteIdx, 1);
   saveDocs();
   renderDocs();
+  closeConfirmModal();
   toast('Đã xóa tài liệu', 'info');
 }
 
@@ -2218,14 +2298,20 @@ function deleteDoc(i) {
 document.getElementById('docModal').addEventListener('click', function(e) {
   if (e.target === this) closeDocModal();
 });
+document.getElementById('docConfirmModal').addEventListener('click', function(e) {
+  if (e.target === this) closeConfirmModal();
+});
 
-// Enter để lưu trong modal
+// Phím tắt
 document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('docModal').classList.contains('open')) {
-    saveDoc();
+  if (document.getElementById('docModal').classList.contains('open')) {
+    if (e.key === 'Enter') { e.preventDefault(); saveDoc(); }
+    if (e.key === 'Escape') closeDocModal();
+    return;
   }
-  if (e.key === 'Escape' && document.getElementById('docModal').classList.contains('open')) {
-    closeDocModal();
+  if (document.getElementById('docConfirmModal').classList.contains('open')) {
+    if (e.key === 'Enter') { e.preventDefault(); confirmDeleteDoc(); }
+    if (e.key === 'Escape') closeConfirmModal();
   }
 });
 
