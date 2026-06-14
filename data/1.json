@@ -1,15 +1,8 @@
 {
   "version": 3,
-  "exportedAt": "2026-06-14T16:04:56.048Z",
+  "exportedAt": "2026-06-12T15:45:04.734Z",
   "tracks": [
     {
-      "docs": [
-        {
-          "id": "osdnk8lmqdyun61",
-          "name": "ài liệu",
-          "url": "https://drive.google.com/file/d/1tB6aELu2hTt0MbHCuCKWbFVXYHbA2t3T/view?usp=drive_link"
-        }
-      ],
       "id": "ft81vv4mpghyiay",
       "name": "Nghe lesson  01",
       "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Nghe%20lesson%20%2001.mp3",
@@ -78,7 +71,6 @@
       ]
     },
     {
-      "docs": [],
       "id": "pty75r9mpzn707k",
       "name": "04 Bai 1--Exercixes",
       "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/04%20Bai%201--Exercixes.mp3",
@@ -93,31 +85,11 @@
       ]
     },
     {
-      "docs": [
-        {
-          "id": "5e2m9rlmqdz6685",
-          "name": "Tên",
-          "url": "https://docs.google.com/document/d/1or1YNjx9p9Q09cIcnSnc8ebJleITU11G/edit?usp=drive_link&ouid=110782795429686302740&rtpof=true&sd=true"
-        }
-      ],
       "id": "hx4cqswmqb3hhkr",
       "name": "Lesson 02",
       "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Lesson%2002.mp3",
       "type": "url",
-      "segments": [
-        {
-          "id": "kckfatymqdz4ue3",
-          "name": "Đoạn 1",
-          "start": "1.00",
-          "end": "1.30"
-        },
-        {
-          "id": "nb6mratmqdz55l3",
-          "name": "Đoạn 2",
-          "start": "2.30",
-          "end": "3.00"
-        }
-      ]
+      "segments": []
     }
   ]
 }
