@@ -633,137 +633,6 @@ input[type=range]::-webkit-slider-thumb{
 }
 .sidebar-overlay.show{display:block;opacity:1}
 
-/* ─── CONTENT TABS ───────────────────────────────── */
-.content-tabs{
-  display:flex;align-items:center;gap:0;
-  border-bottom:1px solid var(--border);
-  background:var(--surface);
-  flex-shrink:0;padding:0 22px;
-}
-.ctab{
-  display:inline-flex;align-items:center;gap:7px;
-  padding:12px 16px;
-  font-size:14px;font-weight:700;
-  color:var(--text-muted);cursor:pointer;
-  border-bottom:2px solid transparent;
-  margin-bottom:-1px;transition:all .15s;
-  background:none;border-top:none;border-left:none;border-right:none;
-  font-family:var(--sans);
-}
-.ctab:hover{color:var(--text-dim)}
-.ctab.active{
-  color:var(--accent);
-  border-bottom-color:var(--accent);
-}
-.ctab i{font-size:13px}
-
-.tab-panel{display:none;flex:1;overflow:hidden;flex-direction:column}
-.tab-panel.active{display:flex}
-
-/* ─── TÀI LIỆU TAB ───────────────────────────────── */
-.doc-area{flex:1;overflow-y:auto;padding:18px 26px;display:flex;flex-direction:column;gap:14px}
-
-.doc-list{display:flex;flex-direction:column;gap:8px;flex:1}
-.doc-empty{
-  flex:1;display:flex;flex-direction:column;
-  align-items:center;justify-content:center;
-  text-align:center;padding:40px;color:var(--text-muted);
-}
-.doc-empty i{font-size:40px;margin-bottom:14px;opacity:.2;display:block}
-.doc-empty p{font-size:13px;line-height:1.7}
-
-.doc-item{
-  display:flex;align-items:center;gap:10px;
-  padding:12px 14px;border-radius:var(--radius);
-  background:var(--card);border:1px solid var(--border);
-  transition:all .15s;
-}
-.doc-item:hover{border-color:var(--border-lit);background:var(--card-hover)}
-.doc-icon{
-  width:36px;height:36px;border-radius:8px;
-  background:var(--accent2-dim);
-  display:flex;align-items:center;justify-content:center;
-  color:var(--accent2);font-size:14px;flex-shrink:0;
-}
-.doc-info{flex:1;min-width:0}
-.doc-name{
-  font-size:14px;font-weight:700;color:var(--text);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-  margin-bottom:3px;
-}
-.doc-url{
-  font-size:11px;color:var(--text-muted);font-family:var(--mono);
-  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
-}
-.doc-open{
-  width:30px;height:30px;border-radius:7px;border:none;
-  background:transparent;color:var(--text-muted);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .15s;font-size:13px;flex-shrink:0;
-}
-.doc-open:hover{background:var(--accent2-dim);color:var(--accent2)}
-.doc-del{
-  width:30px;height:30px;border-radius:7px;border:none;
-  background:transparent;color:var(--text-muted);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  transition:all .15s;font-size:12px;flex-shrink:0;opacity:0;
-}
-.doc-item:hover .doc-del{opacity:1}
-.doc-del:hover{background:var(--danger-dim);color:var(--danger)}
-
-.doc-add-btn{
-  display:flex;align-items:center;justify-content:center;gap:8px;
-  padding:12px;border-radius:var(--radius);
-  background:transparent;border:1.5px dashed var(--border-lit);
-  color:var(--text-muted);cursor:pointer;
-  font-family:var(--sans);font-size:14px;font-weight:700;
-  transition:all .15s;width:100%;
-}
-.doc-add-btn:hover{border-color:var(--accent2);color:var(--accent2);background:var(--accent2-dim)}
-
-/* ─── POPUP MODAL ────────────────────────────────── */
-.modal-overlay{
-  display:none;position:fixed;inset:0;
-  background:rgba(0,0,0,.65);
-  z-index:300;
-  backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px);
-  align-items:center;justify-content:center;
-}
-.modal-overlay.open{display:flex}
-.modal{
-  background:var(--surface);
-  border:1px solid var(--border-lit);
-  border-radius:14px;
-  width:min(440px, calc(100vw - 32px));
-  box-shadow:0 20px 60px rgba(0,0,0,.7);
-  animation:modalIn .18s ease;
-}
-@keyframes modalIn{from{opacity:0;transform:translateY(-12px) scale(.97)}to{opacity:1;transform:none}}
-.modal-head{
-  display:flex;align-items:center;gap:9px;
-  padding:16px 18px;border-bottom:1px solid var(--border);
-}
-.modal-head i{color:var(--accent2);font-size:16px}
-.modal-head-title{font-size:16px;font-weight:800;color:var(--text);flex:1}
-.modal-close{
-  width:28px;height:28px;border-radius:7px;border:none;
-  background:transparent;color:var(--text-muted);cursor:pointer;
-  display:flex;align-items:center;justify-content:center;
-  font-size:14px;transition:all .15s;
-}
-.modal-close:hover{background:var(--danger-dim);color:var(--danger)}
-.modal-body{padding:18px}
-.modal-field{margin-bottom:14px}
-.modal-label{
-  display:block;font-size:12px;font-weight:700;
-  letter-spacing:.5px;text-transform:uppercase;
-  color:var(--text-muted);margin-bottom:7px;
-}
-.modal-foot{
-  display:flex;gap:8px;justify-content:flex-end;
-  padding:12px 18px;border-top:1px solid var(--border);
-}
-
 /* ─── MOBILE RESPONSIVE ──────────────────────────── */
 @media(max-width:700px){
   /* Sidebar: ẩn mặc định, slide từ trái */
@@ -982,73 +851,19 @@ input[type=range]::-webkit-slider-thumb{
       </div>
     </div>
 
-    <!-- Content Tabs -->
-    <div class="content-tabs">
-      <button class="ctab active" id="tabAudioBtn" onclick="switchTab('audio')">
-        <i class="fas fa-headphones"></i> Âm thanh
-      </button>
-      <button class="ctab" id="tabDocBtn" onclick="switchTab('doc')">
-        <i class="fas fa-book-open"></i> Tài liệu
-      </button>
-    </div>
-
-    <!-- Tab: Âm thanh (Segments) -->
-    <div class="tab-panel active" id="tabAudio">
-      <div class="seg-area">
-        <div class="seg-head">
-          <div class="seg-title"><i class="fas fa-scissors"></i>Các đoạn nghe</div>
-          <span class="seg-badge" id="segCount">0 đoạn</span>
-        </div>
-        <div class="seg-list" id="segList"></div>
-        <button class="add-seg" id="addSegBtn" onclick="addSeg()">
-          <i class="fas fa-plus-circle"></i> Thêm đoạn nghe mới
-        </button>
+    <!-- Segments -->
+    <div class="seg-area">
+      <div class="seg-head">
+        <div class="seg-title"><i class="fas fa-scissors"></i>Các đoạn nghe</div>
+        <span class="seg-badge" id="segCount">0 đoạn</span>
       </div>
-    </div>
-
-    <!-- Tab: Tài liệu -->
-    <div class="tab-panel" id="tabDoc">
-      <div class="doc-area">
-        <div class="doc-list" id="docList">
-          <div class="doc-empty" id="docEmpty">
-            <i class="fas fa-file-lines"></i>
-            <p>Chưa có tài liệu nào.<br>Nhấn nút bên dưới để thêm link tài liệu.</p>
-          </div>
-        </div>
-        <button class="doc-add-btn" onclick="openDocModal()">
-          <i class="fas fa-plus-circle"></i> Thêm tài liệu
-        </button>
-      </div>
+      <div class="seg-list" id="segList"></div>
+      <button class="add-seg" id="addSegBtn" onclick="addSeg()">
+        <i class="fas fa-plus-circle"></i> Thêm đoạn nghe mới
+      </button>
     </div>
 
   </div><!-- /playerSection -->
-
-  <!-- Modal thêm tài liệu -->
-  <div class="modal-overlay" id="docModal">
-    <div class="modal">
-      <div class="modal-head">
-        <i class="fas fa-file-circle-plus"></i>
-        <span class="modal-head-title">Thêm tài liệu</span>
-        <button class="modal-close" onclick="closeDocModal()"><i class="fas fa-xmark"></i></button>
-      </div>
-      <div class="modal-body">
-        <div class="modal-field">
-          <label class="modal-label" for="docNameInput">Tên tài liệu</label>
-          <input type="text" id="docNameInput" placeholder="Ví dụ: Giáo trình nghe A1…">
-        </div>
-        <div class="modal-field">
-          <label class="modal-label" for="docUrlInput">Đường dẫn URL</label>
-          <input type="text" id="docUrlInput" placeholder="https://example.com/tai-lieu.pdf">
-        </div>
-      </div>
-      <div class="modal-foot">
-        <button class="btn btn-ghost btn-sm" onclick="closeDocModal()">Hủy</button>
-        <button class="btn btn-accent btn-sm" onclick="saveDoc()">
-          <i class="fas fa-plus"></i> Thêm
-        </button>
-      </div>
-    </div>
-  </div>
 </div><!-- /main -->
 
 <!-- Toast -->
@@ -2126,116 +1941,11 @@ async function loadDataFile(name) {
   }
 }
 
-// ══════════════════════════════════════════════════════
-// CONTENT TABS
-// ══════════════════════════════════════════════════════
-function switchTab(name) {
-  ['audio','doc'].forEach(t => {
-    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1)).classList.toggle('active', t === name);
-    document.getElementById('tab' + t.charAt(0).toUpperCase() + t.slice(1) + 'Btn').classList.toggle('active', t === name);
-  });
-}
-
-// ══════════════════════════════════════════════════════
-// TÀI LIỆU
-// ══════════════════════════════════════════════════════
-const DOC_KEY = 'langaudio_docs_v1';
-let _docs = [];
-
-function loadDocs() {
-  try {
-    const raw = localStorage.getItem(DOC_KEY);
-    _docs = raw ? JSON.parse(raw) : [];
-  } catch(e) { _docs = []; }
-}
-
-function saveDocs() {
-  localStorage.setItem(DOC_KEY, JSON.stringify(_docs));
-}
-
-function renderDocs() {
-  const list = document.getElementById('docList');
-  const empty = document.getElementById('docEmpty');
-  // Remove existing doc items (keep empty placeholder in DOM)
-  list.querySelectorAll('.doc-item').forEach(el => el.remove());
-  if (!_docs.length) {
-    empty.style.display = '';
-    return;
-  }
-  empty.style.display = 'none';
-  _docs.forEach((doc, i) => {
-    const el = document.createElement('div');
-    el.className = 'doc-item';
-    el.innerHTML = `
-      <div class="doc-icon"><i class="fas fa-file-lines"></i></div>
-      <div class="doc-info">
-        <div class="doc-name" title="${esc(doc.name)}">${esc(doc.name)}</div>
-        <div class="doc-url" title="${esc(doc.url)}">${esc(doc.url)}</div>
-      </div>
-      <button class="doc-open" title="Mở tài liệu" onclick="window.open(${JSON.stringify(doc.url)},'_blank')">
-        <i class="fas fa-arrow-up-right-from-square"></i>
-      </button>
-      <button class="doc-del" title="Xóa" onclick="deleteDoc(${i})">
-        <i class="fas fa-trash-can"></i>
-      </button>`;
-    list.insertBefore(el, empty);
-  });
-}
-
-function openDocModal() {
-  document.getElementById('docNameInput').value = '';
-  document.getElementById('docUrlInput').value = '';
-  document.getElementById('docModal').classList.add('open');
-  setTimeout(() => document.getElementById('docNameInput').focus(), 80);
-}
-
-function closeDocModal() {
-  document.getElementById('docModal').classList.remove('open');
-}
-
-function saveDoc() {
-  const name = document.getElementById('docNameInput').value.trim();
-  const url  = document.getElementById('docUrlInput').value.trim();
-  if (!name) { toast('Vui lòng nhập tên tài liệu', 'err'); return; }
-  if (!url)  { toast('Vui lòng nhập đường dẫn URL', 'err'); return; }
-  // Thêm https:// nếu thiếu scheme
-  const finalUrl = /^https?:\/\//i.test(url) ? url : 'https://' + url;
-  _docs.push({ id: uid(), name, url: finalUrl });
-  saveDocs();
-  renderDocs();
-  closeDocModal();
-  toast('✓ Đã thêm tài liệu', 'ok');
-}
-
-function deleteDoc(i) {
-  _docs.splice(i, 1);
-  saveDocs();
-  renderDocs();
-  toast('Đã xóa tài liệu', 'info');
-}
-
-// Đóng modal khi click ra ngoài
-document.getElementById('docModal').addEventListener('click', function(e) {
-  if (e.target === this) closeDocModal();
-});
-
-// Enter để lưu trong modal
-document.addEventListener('keydown', function(e) {
-  if (e.key === 'Enter' && document.getElementById('docModal').classList.contains('open')) {
-    saveDoc();
-  }
-  if (e.key === 'Escape' && document.getElementById('docModal').classList.contains('open')) {
-    closeDocModal();
-  }
-});
-
 // INIT
 // ══════════════════════════════════════════════════════
 async function init() {
   load();
   renderPl();
-  loadDocs();
-  renderDocs();
 
   // Restore vol
   aud.volume = S.vol;
