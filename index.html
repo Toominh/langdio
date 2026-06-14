@@ -1708,6 +1708,7 @@ function importData(input) {
         name:     t.name     || 'Unknown',
         src:      t.src      || '',
         type:     t.type     || 'url',
+        docs:     (t.docs    || []),
         segments: (t.segments||[]).map(s => ({
           id:    s.id    || uid(),
           name:  s.name  || '',
@@ -1725,7 +1726,7 @@ function importData(input) {
       ps.classList.add('hidden');
       ps.style.display = '';
       document.getElementById('emptyState').classList.remove('hidden');
-      save(); renderPl();
+      save(); renderPl(); renderDocs();
       toast(`Đã nhập ${S.tracks.length} bài audio`, 'info');
 
       // Auto-select: chỉ chọn URL track có src (file track cần tải lại, không auto-select)
@@ -1757,7 +1758,7 @@ function clearStorage() {
   const ps = document.getElementById('playerSection');
   ps.classList.add('hidden'); ps.style.display = '';
   document.getElementById('emptyState').classList.remove('hidden');
-  renderPl();
+  renderPl(); renderDocs();
   toast('Đã xóa toàn bộ dữ liệu', 'info');
 }
 
@@ -2147,7 +2148,7 @@ async function loadDataFile(name) {
     const ps = document.getElementById('playerSection');
     ps.classList.add('hidden'); ps.style.display = '';
     document.getElementById('emptyState').classList.remove('hidden');
-    save(); renderPl();
+    save(); renderPl(); renderDocs();
     toast(`✓ Đã nạp "${name}" — ${S.tracks.length} bài`, 'ok');
 
     const firstUrl = S.tracks.find(t => t.type === 'url' && t.src);
