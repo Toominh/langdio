@@ -57,12 +57,38 @@ body{background:var(--bg);color:var(--text);font-family:var(--sans);display:flex
 .logo{
   display:flex;align-items:center;gap:10px;
   font-size:22px;font-weight:800;letter-spacing:-0.5px;
-  color:var(--accent);
+  color:var(--accent);margin-bottom:14px;
 }
 .logo i{font-size:20px}
 .logo span{color:var(--text)}
 
 /* URL row */
+.url-area{
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:11px 12px;margin-bottom:10px;
+}
+.area-label{
+  font-size:13px;font-weight:700;letter-spacing:0.8px;
+  text-transform:uppercase;color:var(--text-muted);margin-bottom:7px;
+  display:flex;align-items:center;gap:6px;
+}
+.area-label i{color:var(--accent);font-size:13px}
+.url-row{display:flex;gap:7px}
+.url-row input{flex:1}
+
+/* Drop zone */
+.dropzone{
+  border:2px dashed var(--border-lit);border-radius:var(--radius);
+  padding:12px;text-align:center;color:var(--text-muted);
+  font-size:13px;cursor:pointer;transition:all .15s;
+}
+.dropzone i{font-size:18px;display:block;margin-bottom:5px;color:var(--text-muted)}
+.dropzone:hover,.dropzone.over{
+  border-color:var(--accent);color:var(--accent);
+  background:var(--accent-dim);
+}
+.dropzone:hover i,.dropzone.over i{color:var(--accent)}
+
 /* Inputs */
 input[type=text],input[type=number]{
   background:var(--bg);border:1px solid var(--border);
@@ -695,26 +721,54 @@ input[type=range]::-webkit-slider-thumb{
   <div class="sb-head">
     <div class="logo">
       <i class="fas fa-headphones-simple"></i>Co Ho<span>Audio</span>
-      <div style="margin-left:auto;display:flex;gap:6px;align-items:center">
-        <button class="btn btn-icon" onclick="document.getElementById('fileInput').click()" title="Chọn file / kéo thả audio vào đây">
-          <i class="fas fa-folder-open"></i>
-        </button>
-        <button class="btn btn-icon" id="topRescanBtn" onclick="rescanAudio()" title="Quét lại thư mục audio/">
-          <i class="fas fa-rotate"></i>
+    </div>
+
+    <!-- URL Input -->
+    <div class="url-area" style="margin-bottom:9px">
+      <div class="area-label"><i class="fas fa-link"></i>Thêm từ URL</div>
+      <div class="url-row">
+        <input type="text" id="urlInput" placeholder="https://...audio.mp3">
+        <button class="btn btn-accent btn-sm" onclick="addFromUrl()" style="padding:8px 11px">
+          <i class="fas fa-plus"></i>
         </button>
       </div>
     </div>
 
-    <!-- Hidden inputs & status elements (dùng cho JS) -->
+    <!-- File Drop Zone -->
+    <div class="dropzone" id="dropzone" onclick="document.getElementById('fileInput').click()">
+      <i class="fas fa-folder-open"></i>
+      Chọn file / kéo thả audio vào đây
+    </div>
     <input type="file" id="fileInput" accept="audio/*" multiple style="display:none" onchange="loadFiles(this.files)">
-    <div style="display:none">
-      <div id="ghSection">
-        <div id="ghStatus"></div>
+
+    <!-- Auto-load: GitHub Pages hoặc File System -->
+    <div class="url-area" style="margin-top:9px;margin-bottom:0">
+      <div class="area-label"><i class="fas fa-rotate"></i>Tự động nạp audio</div>
+
+      <!-- GitHub Pages mode (auto-hiện nếu detect được) -->
+      <div id="ghSection" style="display:none">
+        <div id="ghStatus" style="font-size:12px;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono);line-height:1.5">
+          <i class="fas fa-circle-notch fa-spin"></i> Đang kiểm tra...
+        </div>
+        <button class="btn btn-card btn-sm" style="width:100%" onclick="autoLoadFromGitHub(true)">
+          <i class="fas fa-rotate"></i> Quét lại thư mục audio/
+        </button>
       </div>
+
+      <!-- File System Access API mode (local / browser) -->
       <div id="fsSection">
-        <div id="folderStatus"></div>
-        <button id="folderRescanBtn"></button>
-        <div id="folderBrowserNote"></div>
+        <div id="folderStatus" style="font-size:12px;color:var(--text-muted);margin-bottom:7px;font-family:var(--mono)">Chưa chọn thư mục</div>
+        <div style="display:flex;gap:7px">
+          <button class="btn btn-card btn-sm" style="flex:1" onclick="pickAudioFolder()">
+            <i class="fas fa-folder-plus"></i> Chọn thư mục
+          </button>
+          <button class="btn btn-icon" id="folderRescanBtn" onclick="rescanFolder()" title="Quét lại thư mục" style="display:none">
+            <i class="fas fa-rotate"></i>
+          </button>
+        </div>
+        <div id="folderBrowserNote" style="font-size:11px;color:var(--text-muted);margin-top:6px;display:none">
+          <i class="fas fa-circle-info" style="color:var(--accent2)"></i> Chỉ hỗ trợ Chrome / Edge
+        </div>
       </div>
     </div>
   </div>
@@ -1002,6 +1056,22 @@ function trackSrc(t) {
 // ══════════════════════════════════════════════════════
 // ADD TRACKS
 // ══════════════════════════════════════════════════════
+function addFromUrl() {
+  const inp = document.getElementById('urlInput');
+  const url = inp.value.trim();
+  if (!url) return;
+  if (!url.startsWith('http') && !url.startsWith('blob') && !url.startsWith('/')) {
+    toast('URL không hợp lệ', 'err'); return;
+  }
+  const name = decodeURIComponent(url.split('/').pop().split('?')[0]) || 'Audio';
+  const t = { id:uid(), name, src:url, type:'url', segments:[] };
+  S.tracks.push(t);
+  inp.value = '';
+  save();
+  renderPl();
+  selectTrack(t.id);
+  toast('Đã thêm: ' + name);
+}
 
 function loadFiles(files) {
   const audioFiles = Array.from(files).filter(f =>
@@ -1443,17 +1513,27 @@ document.addEventListener('keydown', e => {
 // ══════════════════════════════════════════════════════
 // DRAG & DROP
 // ══════════════════════════════════════════════════════
-// Drag & drop toàn trang
+const dz = document.getElementById('dropzone');
+
 ['dragover','dragenter'].forEach(ev => {
-  document.body.addEventListener(ev, e => { e.preventDefault(); });
+  document.body.addEventListener(ev, e => {
+    e.preventDefault();
+    dz.classList.add('over');
+  });
 });
 ['dragleave','drop'].forEach(ev => {
   document.body.addEventListener(ev, e => {
     if (ev === 'drop') {
       e.preventDefault();
-      loadFiles(e.dataTransfer.files);
+      const files = e.dataTransfer.files;
+      loadFiles(files);
     }
+    dz.classList.remove('over');
   });
+});
+
+document.getElementById('urlInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') addFromUrl();
 });
 
 // ══════════════════════════════════════════════════════
@@ -1677,16 +1757,9 @@ async function loadDirHandleFromDB() {
 
 function setFolderStatus(label, showRescan) {
   const el  = document.getElementById('folderStatus');
-  if (el) el.innerHTML = label;
-  // Cập nhật tooltip nút rescan trên header
-  const topBtn = document.getElementById('topRescanBtn');
-  if (topBtn && showRescan) {
-    // Lấy tên thư mục từ label (nếu có) để hiển thị tooltip
-    const tmp = document.createElement('div');
-    tmp.innerHTML = label;
-    const folderName = tmp.textContent.trim();
-    topBtn.title = folderName ? `Quét lại: ${folderName}` : 'Quét lại thư mục audio/';
-  }
+  const btn = document.getElementById('folderRescanBtn');
+  if (el)  el.innerHTML = label;
+  if (btn) btn.style.display = showRescan ? 'flex' : 'none';
 }
 
 async function scanAndLoad(handle, silent = false) {
@@ -1736,26 +1809,12 @@ async function rescanFolder() {
   } catch { toast('Lỗi quét thư mục', 'err'); }
 }
 
-// Hàm rescan thống nhất: dùng cho nút icon trên menu
-async function rescanAudio() {
-  const btn = document.getElementById('topRescanBtn');
-  if (btn) { btn.querySelector('i').classList.add('fa-spin'); btn.disabled = true; }
-  try {
-    const gh = detectGitHub();
-    if (gh) {
-      await autoLoadFromGitHub(true);
-    } else {
-      await rescanFolder();
-    }
-  } finally {
-    if (btn) { btn.querySelector('i').classList.remove('fa-spin'); btn.disabled = false; }
-  }
-}
-
 async function initAutoLoad() {
   // Ưu tiên GitHub Pages (server-side, không cần tương tác)
   const gh = detectGitHub();
   if (gh) {
+    document.getElementById('ghSection').style.display = 'block';
+    document.getElementById('fsSection').style.display = 'none';
     await autoLoadFromGitHub(false);
     return;
   }
