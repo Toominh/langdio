@@ -1,0 +1,258 @@
+{
+  "version": 3,
+  "exportedAt": "2026-07-02T07:18:04.627Z",
+  "tracks": [
+    {
+      "docs": [
+        {
+          "id": "osdnk8lmqdyun61",
+          "name": "Lesson 1",
+          "url": "https://drive.google.com/file/d/18gTmsVfjwqjLRaRVFZKXhFwKHZ0pnzrF/view?usp=drive_link"
+        }
+      ],
+      "id": "ft81vv4mpghyiay",
+      "name": "Nghe lesson  01",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Nghe%20lesson%20%2001.mp3",
+      "type": "url",
+      "segments": [
+        {
+          "id": "jkys8aempgmz47j",
+          "name": "Đoạn 1",
+          "start": "0.35",
+          "end": "2.30"
+        },
+        {
+          "id": "sj1rtjumpgnoc3l",
+          "name": "Đoạn 2",
+          "start": "2.40",
+          "end": "4.38"
+        },
+        {
+          "id": "s3wzuq9mpgnp2kk",
+          "name": "Đoạn 3",
+          "start": "4.38",
+          "end": "7.33"
+        },
+        {
+          "id": "qt82naimpgnps13",
+          "name": "Đoạn 4",
+          "start": "7.33",
+          "end": "8.45"
+        },
+        {
+          "id": "g8py0g2mpgnq4re",
+          "name": "Đoạn 5",
+          "start": "8.45",
+          "end": "13.51"
+        },
+        {
+          "id": "02vtdoxmpgnqonn",
+          "name": "Đoạn 6",
+          "start": "13.51",
+          "end": "15.22"
+        },
+        {
+          "id": "cdq1d8mmpgnra2x",
+          "name": "Đoạn 7",
+          "start": "15.22",
+          "end": "15.41"
+        },
+        {
+          "id": "4cpo7s5mpgnrrut",
+          "name": "Đoạn 8",
+          "start": "15.41",
+          "end": "18.19"
+        },
+        {
+          "id": "2bq3xufmpgns2px",
+          "name": "Đoạn 9",
+          "start": "18.19",
+          "end": "18.49"
+        },
+        {
+          "id": "zj80gtkmpgnsb62",
+          "name": "Đoạn 10",
+          "start": "18.49",
+          "end": "21.00"
+        }
+      ]
+    },
+    {
+      "docs": [
+        {
+          "id": "pxdxrx9mqeoq9sh",
+          "name": "tài liệu nghe",
+          "url": "https://drive.google.com/file/d/14NsEOyXiUJWHJLJZ8OWk9Oxb5oEd2WW7/view?usp=sharing"
+        }
+      ],
+      "id": "pty75r9mpzn707k",
+      "name": "04 Bai 1--Exercixes",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/04%20Bai%201--Exercixes.mp3",
+      "type": "url",
+      "segments": [
+        {
+          "id": "9gpjmcumpzn7p5b",
+          "name": "Đoạn 1",
+          "start": "3.42",
+          "end": "5.05"
+        },
+        {
+          "id": "iq1sxotmqeolaq8",
+          "name": "Đoạn 2",
+          "start": "5.05",
+          "end": "6.45"
+        }
+      ]
+    },
+    {
+      "docs": [
+        {
+          "id": "5e2m9rlmqdz6685",
+          "name": "Lesson 2",
+          "url": "https://drive.google.com/file/d/10GmWvDogbnLmr0lvee5jsaGiFXf6QSqg/view?usp=sharing"
+        }
+      ],
+      "id": "hx4cqswmqb3hhkr",
+      "name": "Lesson 02",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Lesson%2002.mp3",
+      "type": "url",
+      "segments": [
+        {
+          "id": "kckfatymqdz4ue3",
+          "name": "Đoạn 1",
+          "start": "0.09",
+          "end": "0.40"
+        },
+        {
+          "id": "nb6mratmqdz55l3",
+          "name": "Đoạn 2",
+          "start": "0.41",
+          "end": "2.09"
+        },
+        {
+          "id": "363n63xmqeot81g",
+          "name": "Đoạn 3",
+          "start": "2.10",
+          "end": "3.08"
+        },
+        {
+          "id": "malvcdpmqeou3vv",
+          "name": "Đoạn 4",
+          "start": "3.08",
+          "end": "4.45"
+        },
+        {
+          "id": "d5uxaa4mqeouyx9",
+          "name": "Đoạn 5",
+          "start": "4.45",
+          "end": "9.21"
+        },
+        {
+          "id": "d0uluztmqeov826",
+          "name": "Đoạn 6",
+          "start": "9.21",
+          "end": "11.07"
+        },
+        {
+          "id": "cayyl6cmqeovfex",
+          "name": "Đoạn 7",
+          "start": "11.07",
+          "end": "11.40"
+        },
+        {
+          "id": "a3uhoo6mqeovzf4",
+          "name": "Đoạn 8",
+          "start": "11.40",
+          "end": "13.35"
+        },
+        {
+          "id": "xmivuxfmqeow5zk",
+          "name": "Đoạn 9",
+          "start": "13.35",
+          "end": "16.03"
+        }
+      ]
+    },
+    {
+      "id": "ngcgx3fmr2c60ss",
+      "name": "Lesson 3",
+      "src": "https://raw.githubusercontent.com/Toominh/langdio/main/audio/Lesson%203.mp3",
+      "type": "url",
+      "segments": [
+        {
+          "id": "l3bagvfmr35s24a",
+          "name": "Đoạn 1",
+          "start": "0.09",
+          "end": "1.39"
+        },
+        {
+          "id": "bakpz6imr35sv1l",
+          "name": "Đoạn 2",
+          "start": "1.39",
+          "end": "4.05"
+        },
+        {
+          "id": "y8x0x5imr35timl",
+          "name": "Đoạn 3",
+          "start": "4.05",
+          "end": "6.33"
+        },
+        {
+          "id": "771vxd5mr35ubfd",
+          "name": "Đoạn 4",
+          "start": "6.33",
+          "end": "7.56"
+        },
+        {
+          "id": "8n2aamkmr35uo8k",
+          "name": "Đoạn 5",
+          "start": "7.56",
+          "end": "14.55"
+        },
+        {
+          "id": "eg6ddo0mr35vfc1",
+          "name": "Đoạn 6",
+          "start": "14.55",
+          "end": "16.50"
+        },
+        {
+          "id": "k80wn9ymr35vtbg",
+          "name": "Đoạn 7",
+          "start": "16.50",
+          "end": "18.33"
+        },
+        {
+          "id": "pbop5jgmr35w6ta",
+          "name": "Đoạn 8",
+          "start": "18.33",
+          "end": "19.03"
+        },
+        {
+          "id": "rq9ej2fmr35wce2",
+          "name": "Đoạn 9",
+          "start": "19.03",
+          "end": "19.31"
+        },
+        {
+          "id": "75h5fqemr35wili",
+          "name": "Đoạn 10",
+          "start": "19.31",
+          "end": "21.01"
+        },
+        {
+          "id": "krxebp5mr35wtup",
+          "name": "Đoạn 11",
+          "start": "21.01",
+          "end": "23.30"
+        }
+      ],
+      "docs": [
+        {
+          "id": "grnnswomr369nvp",
+          "name": "Lesson 3",
+          "url": "https://drive.google.com/file/d/1KE_KlGESG0ItRzOe9AxFJy34bzPe8chS/view?usp=sharing"
+        }
+      ]
+    }
+  ]
+}
